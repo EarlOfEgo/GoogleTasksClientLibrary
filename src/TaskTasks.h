@@ -14,6 +14,7 @@
 
 #include "json.h"
 
+
 typedef struct
 {
     char *type;         /*Type of the link, e.g. "email".*/
@@ -51,7 +52,7 @@ typedef struct
     TaskItem *items;    /*Collection of tasks.*/
 }TaskTasks;
 
-
+TaskTasks* createNewTaskTasksFromJson(char *jsonResponse);
 
 #ifdef	__cplusplus
 extern "C" {
