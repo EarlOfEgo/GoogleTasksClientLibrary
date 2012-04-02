@@ -21,6 +21,11 @@ extern "C" {
 #define KIND_STRING "kind"
 #define ETAG_STRING "etag"
 #define NEXTPAGETOKEN_STRING "nextPageToken"
+#define TASKLISTITEM_STRING "tasks#taskList"
+#define ID_STRING "id"
+#define TITLE_STRING "title"
+#define UPDATED_STRING "updated"
+#define SELFLINK_STRING "selfLink"
 
 typedef struct
 {
@@ -30,7 +35,7 @@ typedef struct
     char *title;    /*Title of the task list.*/
     char *updated;  /*URL pointing to this task list. Used to retrieve, update, or delete this task list.*/
     char *selfLink; /*Last modification time of the task list (as a RFC 3339 timestamp).*/
-}TaskLists;
+}TaskListItem;
 
 typedef struct
 {
@@ -38,16 +43,16 @@ typedef struct
     char *etag;                 /*ETag of the resource.*/
     char *nextPageToken;        /*Token that can be used to request the next page of this result.*/
     int numberItems;
-    TaskLists *items;   /*Collection of task lists.*/
+    TaskListItem *items;   /*Collection of task lists.*/
 }TaskLists_Lists;
 
 /*const char * tasklistidenti = "tasks#taskLists";
 const char * erroro = "error";*/
 
 TaskLists_Lists* createNewTaskLists_ListsFromJson(char *jsonResponse);
-TaskLists* createNewItem(char *jsonResponse);
+TaskListItem* createNewItem(json_value * value);
 
-void addItemToTaskLists_Lists(TaskLists_Lists *taskLists_Lists, TaskLists *item);
+void addItemToTaskLists_Lists(TaskLists_Lists *taskLists_Lists, TaskListItem *item);
 void deleteItemFromTaskLists_list(TaskLists_Lists *taskLists_Lists, char *item);
 
 

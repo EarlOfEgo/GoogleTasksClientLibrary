@@ -15,7 +15,14 @@
  */
 
 TaskLists_Lists *lists;
-
+char * json_taskList_valid = "{         \
+  \"kind\": \"tasks#taskList\",         \
+    \"id\": \"id_string\",              \
+  \"etag\": \"etag_string\",            \
+  \"title\": \"title_string\",          \
+  \"updated\": \"updated_datetime\",    \
+  \"selfLink\": \"selfLink_string\"     \
+        }";
 int init_suite(void)
 {
     lists = malloc(sizeof(TaskLists_Lists));
@@ -31,7 +38,7 @@ int clean_suite(void)
 void test_addAndDeleteAnItem()
 {
     
-    TaskLists *item = malloc(sizeof(TaskLists));
+    TaskListItem *item = malloc(sizeof(TaskListItem));
     
     item->id = "1";
     
@@ -60,7 +67,7 @@ void test_addAndDeleteMoreItems()
     int i;
     for(i = 0; i < 10; i++)
     {
-        TaskLists *item = malloc(sizeof(TaskLists));
+        TaskListItem *item = malloc(sizeof(TaskListItem));
         item->id = (char *)malloc(2);
         item->id[0] = (char) i + 48;
         item->id[1] = '\0';
@@ -82,6 +89,24 @@ void test_addAndDeleteMoreItems()
     
 }
 
+void test_createNewItem()
+{
+    json_settings settings;
+    memset(&settings, 0, sizeof (json_settings));
+    char error[256];
+    json_value * value = json_parse_ex(&settings, json_taskList_valid, error);
+    TaskListItem *item =  createNewItem(value);
+    CU_ASSERT_PTR_NOT_NULL(item);
+
+    CU_ASSERT_STRING_EQUAL(item->kind, "tasks#taskList");
+    CU_ASSERT_STRING_EQUAL(item->id, "id_string");
+    CU_ASSERT_STRING_EQUAL(item->etag, "etag_string");
+    CU_ASSERT_STRING_EQUAL(item->selfLink, "selfLink_string");
+    CU_ASSERT_STRING_EQUAL(item->updated, "updated_datetime");
+ 
+}
+
+
 int main()
 {
     CU_pSuite pSuite = NULL;
@@ -100,7 +125,9 @@ int main()
 
     /* Add the tests to the suite */
     if ((NULL == CU_add_test(pSuite, "test1", test_addAndDeleteAnItem)) ||
-            (NULL == CU_add_test(pSuite, "test2", test_addAndDeleteMoreItems)))
+            (NULL == CU_add_test(pSuite, "test2", test_addAndDeleteMoreItems)) || 
+            (NULL == CU_add_test(pSuite, "test3", test_createNewItem))
+            )
     {
         CU_cleanup_registry();
         return CU_get_error();

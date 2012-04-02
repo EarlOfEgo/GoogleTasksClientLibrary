@@ -2,12 +2,12 @@
 
 #include "TaskLists.h"
 
-void addItemToTaskLists_Lists(TaskLists_Lists *taskLists_Lists, TaskLists *item)
+void addItemToTaskLists_Lists(TaskLists_Lists *taskLists_Lists, TaskListItem *item)
 {
     void *tmp;
     if(taskLists_Lists->numberItems != 0)
     {
-        tmp = realloc(taskLists_Lists->items, ((taskLists_Lists->numberItems + 1) * sizeof(TaskLists)));
+        tmp = realloc(taskLists_Lists->items, ((taskLists_Lists->numberItems + 1) * sizeof(TaskListItem)));
         if(!tmp)
         {
             printf("ERROR, reallocating");
@@ -16,14 +16,14 @@ void addItemToTaskLists_Lists(TaskLists_Lists *taskLists_Lists, TaskLists *item)
     }
     else
     {
-        tmp = malloc(sizeof(TaskLists));
+        tmp = malloc(sizeof(TaskListItem));
         if(!tmp)
         {
             printf("ERROR, allocating");
             return;
         }
     }
-    taskLists_Lists->items = (TaskLists*) tmp;
+    taskLists_Lists->items = (TaskListItem*) tmp;
     taskLists_Lists->items[taskLists_Lists->numberItems++] = *item;
 }
 
@@ -70,7 +70,7 @@ TaskLists_Lists* createNewTaskLists_ListsFromJson(char *jsonResponse)
     if(value != NULL)
     {
         TaskLists_Lists *newList = malloc(sizeof(TaskLists_Lists));
-        int i;
+        int i, j;
         for(i = 0; i < value->u.object.length; i++)
         {
            if(strcmp(value->u.object.values[i].name, KIND_STRING) == 0) 
@@ -80,16 +80,17 @@ TaskLists_Lists* createNewTaskLists_ListsFromJson(char *jsonResponse)
            }
            else if(strcmp(value->u.object.values[i].name, ETAG_STRING) == 0)
            {
-               newList->etag = malloc(value->u.object.values[i].value->u.string.ptr);
+               newList->etag = malloc(value->u.object.values[i].value->u.string.length);
                strcpy(newList->etag, value->u.object.values[i].value->u.string.ptr);
            }
            else if(strcmp(value->u.object.values[i].name, NEXTPAGETOKEN_STRING) == 0)
            {
-               newList->nextPageToken = malloc(value->u.object.values[i].value->u.string.ptr);
+               newList->nextPageToken = malloc(value->u.object.values[i].value->u.string.length);
                strcpy(newList->nextPageToken, value->u.object.values[i].value->u.string.ptr);
            }
            else if(value->u.object.values[i].value->type == json_array)
-                printf("Array\n");
+               for(j = 0; j < value->u.object.values[i].value->u.array.length; i++)
+                    addItemToTaskLists_Lists(newList, createNewItem(value->u.object.values[i].value->u.array.values[j]));
         }
         json_value_free(value); 
         return newList;
@@ -98,7 +99,42 @@ TaskLists_Lists* createNewTaskLists_ListsFromJson(char *jsonResponse)
 }
 
 
-TaskLists* createNewItem(char *jsonResponse)
+TaskListItem* createNewItem(json_value * value)
 {
-    
+    int i;
+    TaskListItem *item = malloc(sizeof(TaskListItem));
+    for(i = 0; i < value->u.object.length; i++)
+    {
+        if(strcmp(value->u.object.values[i].name, KIND_STRING) == 0) 
+        {
+            item->kind = malloc(sizeof(TASKLISTITEM_STRING));
+            strcpy(item->kind, TASKLISTITEM_STRING);
+        }
+        else if(strcmp(value->u.object.values[i].name, ID_STRING) == 0)
+        {
+            item->id = malloc(value->u.object.values[i].value->u.string.length);
+            strcpy(item->id, value->u.object.values[i].value->u.string.ptr);
+        }
+        else if(strcmp(value->u.object.values[i].name, ETAG_STRING) == 0)
+        {
+            item->etag = malloc(value->u.object.values[i].value->u.string.length);
+            strcpy(item->etag, value->u.object.values[i].value->u.string.ptr);
+        }
+        else if(strcmp(value->u.object.values[i].name, TITLE_STRING) == 0)
+        {
+            item->title = malloc(value->u.object.values[i].value->u.string.length);
+            strcpy(item->title, value->u.object.values[i].value->u.string.ptr);
+        }
+        else if(strcmp(value->u.object.values[i].name, SELFLINK_STRING) == 0)
+        {
+            item->selfLink = malloc(value->u.object.values[i].value->u.string.length);
+            strcpy(item->selfLink, value->u.object.values[i].value->u.string.ptr);
+        }
+        else if(strcmp(value->u.object.values[i].name, UPDATED_STRING) == 0)
+        {
+            item->updated = malloc(value->u.object.values[i].value->u.string.length);
+            strcpy(item->updated, value->u.object.values[i].value->u.string.ptr);
+        }
+    }
+    return item;
 }
