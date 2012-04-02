@@ -14,9 +14,10 @@
 
 #include "json.h"
 
-/*#ifdef	__cplusplus
+#ifdef	__cplusplus
 extern "C" {
-#endif*/
+#endif
+    
 #define TASKLISTS_STRING "tasks#taskLists"
 #define KIND_STRING "kind"
 #define ETAG_STRING "etag"
@@ -46,8 +47,6 @@ typedef struct
     TaskListItem *items;   /*Collection of task lists.*/
 }TaskLists_Lists;
 
-/*const char * tasklistidenti = "tasks#taskLists";
-const char * erroro = "error";*/
 
 TaskLists_Lists* createNewTaskLists_ListsFromJson(char *jsonResponse);
 TaskListItem* createNewItem(json_value * value);
@@ -58,9 +57,9 @@ void deleteItemFromTaskLists_list(TaskLists_Lists *taskLists_Lists, char *item);
 
 
 
-/*#ifdef	__cplusplus
+#ifdef	__cplusplus
 }
-#endif*/
+#endif
 
 #endif	/* TASKLISTS_H */
 
