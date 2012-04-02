@@ -33,17 +33,19 @@ void deleteItemFromTaskLists_list(TaskLists_Lists *taskLists_Lists, char *id)
     int indexId = -1;
     TaskLists_Lists *newList = malloc(sizeof(TaskLists_Lists));
     newList->numberItems = 0;
-
+    
     for(i = 0; i < taskLists_Lists->numberItems; i++)
     {
-
-        if(strcmp(taskLists_Lists->items[i].id, id) == 0 )
+        if(taskLists_Lists->items[i].id != NULL)
         {
-            indexId = i;
-            break;
+            if(strcmp(taskLists_Lists->items[i].id, id) == 0 )
+            {
+                indexId = i;
+                break;
+            }
+            else
+                addItemToTaskLists_Lists(newList, &taskLists_Lists->items[i]);
         }
-        else
-            addItemToTaskLists_Lists(newList, &taskLists_Lists->items[i]);
     }
 
     if(indexId == -1)

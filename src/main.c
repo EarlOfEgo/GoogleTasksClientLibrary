@@ -23,37 +23,10 @@ void printList(TaskLists_Lists *lists)
     }
 }
 
-void testAddingAndDeletingAnItemToTaskList_Lists()
-{
-    TaskLists_Lists *lists = malloc(sizeof(TaskLists_Lists));
-    lists->numberItems = 0;
-    lists->kind = "Hallo";
-
-    int i;
-    for(i = 0; i < 26; i++)
-    {
-        TaskLists *item = malloc(sizeof(TaskLists));
-        item->id = (char *)malloc(2);
-        item->id[0] = (char) i + 97;
-        item->id[1] = '\0';
-        addItemToTaskLists_Lists(lists, item);
-        assert(lists->items[i].id && item->id);
-    }
-    deleteItemFromTaskLists_list(lists, "c");
-    assert(lists->numberItems && 25);
-
-    deleteItemFromTaskLists_list(lists, "c");
-    assert(lists->numberItems && 25);
-
-    deleteItemFromTaskLists_list(lists, "z");
-    assert(lists->numberItems && 24);
-}
-
 /*
  * 
  */
 int main(int argc, char** argv) {
-    testAddingAndDeletingAnItemToTaskList_Lists();
     
     char * data = "{\"kind\":\"tasks#taskLists\",\"etag\": \"string\", \"nextPageToken\": \"string\", \"items\": [ { \"kind\": \"tasks#taskList\", \"id\": \"MDE1ODEyMDkyMDA3MzMwNDQ5OTE6MDow\", \"title\": \"Liste von stephan.hagios\", \"updated\": \"2012-03-28T07:52:57.000Z\", \"selfLink\": \"https://www.googleapis.com/tasks/v1/users/@me/lists/MDE1ODEyMDkyMDA3MzMwNDQ5OTE6MDow\" }, {\"kind\": \"tasks#taskList\", \"id\": \"MDE1ODEyMDkyMDA3MzMwNDQ5OTE6MzQxMzAwOTAxOjA\", \"title\": \"Links\", \"updated\": \"2012-03-30T07:53:42.000Z\", \"selfLink\": \"https://www.googleapis.com/tasks/v1/users/@me/lists/MDE1ODEyMDkyMDA3MzMwNDQ5OTE6MzQxMzAwOTAxOjA\" }] }";
     json_settings settings;
