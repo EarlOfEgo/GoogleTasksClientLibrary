@@ -14,13 +14,17 @@
 
 #include "json.h"
 
+#define TYPE_STRING "type"
+#define DESCRIPTION_STRING "description"
+#define LINK_STRING "link"
+
 
 typedef struct
 {
     char *type;         /*Type of the link, e.g. "email".*/
     char *description;  /*The description. In HTML speak: Everything between <a> and </a>.*/
     char *link;         /*The URL.*/
-}TaskLinks;
+}TaskLink;
 
 typedef struct
 {
@@ -39,7 +43,7 @@ typedef struct
     char *deleted;      /*Flag indicating whether the task has been deleted. The default if False.*/
     char *hidden;       /*Flag indicating whether the task is hidden. This is the case if the task had been marked completed when the task list was last cleared. The default is False. This field is read-only.*/
     int numberLinks;    /*Number of links*/
-    TaskLinks *links;   /*Collection of links. This collection is read-only.*/
+    TaskLink *links;   /*Collection of links. This collection is read-only.*/
     
 }TaskItem;
 
@@ -52,7 +56,10 @@ typedef struct
     TaskItem *items;    /*Collection of tasks.*/
 }TaskTasks;
 
-TaskTasks* createNewTaskTasksFromJson(char *jsonResponse);
+TaskLink* createNewTaskLinks(json_value *value);
+
+void addLinkToTaskItem(TaskItem *item, TaskLink *link);
+void deleteLinkFromTaskItem(TaskItem *item, char *description);
 
 #ifdef	__cplusplus
 extern "C" {

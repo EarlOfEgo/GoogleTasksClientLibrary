@@ -48,24 +48,28 @@
  */
 int main()
 {
-    CU_pSuite pSuite = NULL;
+    CU_pSuite pSuite_TaskLists = NULL;
+    CU_pSuite pSuite_TaskTasks = NULL;
 
     /* Initialize the CUnit test registry */
     if (CUE_SUCCESS != CU_initialize_registry())
         return CU_get_error();
 
     /* Add a suite to the registry */
-    pSuite = CU_add_suite("TaskLists_tests", init_suite, clean_suite);
-    if (NULL == pSuite)
+    pSuite_TaskLists = CU_add_suite("TaskLists_tests", init_suite_TaskLists, clean_suite_TaskLists);
+    pSuite_TaskTasks = CU_add_suite("TaskTasks_tests", init_suite_TaskTasks, clean_suite_TaskTasks);
+    if (pSuite_TaskTasks == NULL || pSuite_TaskTasks == NULL)
     {
         CU_cleanup_registry();
         return CU_get_error();
     }
 
     /* Add the tests to the suite */
-    if ((NULL == CU_add_test(pSuite, "test_addAndDeleteAnItem", test_addAndDeleteAnItem)) ||
-            (NULL == CU_add_test(pSuite, "test_addAndDeleteMoreItems", test_addAndDeleteMoreItems)) ||
-            (NULL == CU_add_test(pSuite, "test_createNewItem", test_createNewItem))
+    if ((CU_add_test(pSuite_TaskLists, "test_addAndDeleteAnItem", test_addAndDeleteAnItem) == NULL) ||
+            (CU_add_test(pSuite_TaskLists, "test_addAndDeleteMoreItems", test_addAndDeleteMoreItems)  == NULL) ||
+            (CU_add_test(pSuite_TaskLists, "test_createNewItem", test_createNewItem)  == NULL) ||
+            (CU_add_test(pSuite_TaskTasks, "test_createTaskLink", test_createTaskLink)  == NULL) ||
+            (CU_add_test(pSuite_TaskTasks, "test_addAndDeleteAnLink", test_addAndDeleteAnLink)  == NULL)
             )
     {
         CU_cleanup_registry();

@@ -17,20 +17,20 @@
 TaskLists_Lists *lists;
 char * json_taskList_valid = "{         \
   \"kind\": \"tasks#taskList\",         \
-    \"id\": \"id_string\",              \
+  \"id\": \"id_string\",                \
   \"etag\": \"etag_string\",            \
   \"title\": \"title_string\",          \
   \"updated\": \"updated_datetime\",    \
   \"selfLink\": \"selfLink_string\"     \
-        }";
+}";
 
-int init_suite(void)
+int init_suite_TaskLists(void)
 {
     lists = malloc(sizeof(TaskLists_Lists));
     return 0;
 }
 
-int clean_suite(void)
+int clean_suite_TaskLists(void)
 {
     free(lists);
     return 0;
@@ -47,8 +47,8 @@ void test_addAndDeleteAnItem()
     
     CU_ASSERT_EQUAL(lists->numberItems, 1);
     CU_ASSERT_PTR_NOT_NULL(item);
-    CU_ASSERT_PTR_NOT_NULL(&lists->items[0]);
- //   CU_ASSERT_PTR_EQUAL(&lists->items[0], item);
+    CU_ASSERT_PTR_NOT_NULL(&lists->items[0]);   
+//    CU_ASSERT_PTR_EQUAL(&lists->items[0], item);
     
     deleteItemFromTaskLists_list(lists, "2");
     
