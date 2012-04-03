@@ -15,6 +15,7 @@
  */
 
 TaskLists_Lists *lists;
+
 char * json_taskList_valid = "{         \
   \"kind\": \"tasks#taskList\",         \
   \"id\": \"id_string\",                \
@@ -36,7 +37,7 @@ int clean_suite_TaskLists(void)
     return 0;
 }
 
-void test_addAndDeleteAnItem()
+void test_addAndDeleteAnItemFromTaskLists_list()
 {
     
     TaskListItem *item = malloc(sizeof(TaskListItem));

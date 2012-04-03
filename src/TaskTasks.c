@@ -86,3 +86,60 @@ void deleteLinkFromTaskItem(TaskItem *item, char *description)
     item->links = newItem->links;
     item->numberLinks = newItem->numberLinks;
 }
+
+void addTaskItemToTaskList(TaskList *list, TaskItem *item)
+{
+    void *tmp;
+    if(list->numberItems != 0)
+    {
+        tmp = realloc(list->items, ((list->numberItems + 1) * sizeof(TaskList)));
+        if(!tmp)
+        {
+            printf("ERROR, reallocating");
+            return;
+        }
+    }
+    else
+    {
+        tmp = malloc(sizeof(TaskList));
+        if(!tmp)
+        {
+            printf("ERROR, allocating");
+            return;
+        }
+    }
+    list->items = (TaskList*) tmp;
+    list->items[list->numberItems++] = *item;
+}
+
+void deleteTaskItemFromTaskList(TaskList *list, char *id)
+{
+    int i;
+    int indexId = -1;
+    TaskList *newList = malloc(sizeof(TaskList));
+    newList->numberItems = 0;
+    
+    for(i = 0; i < list->numberItems; i++)
+    {
+        if(list->items[i].id != NULL)
+        {
+            if(strcmp(list->items[i].id, id) == 0 )
+            {
+                indexId = i;
+                break;
+            }
+            else
+                addTaskItemToTaskList(newList, &list->items[i]);
+        }
+    }
+
+    if(indexId == -1)
+        return;
+
+    for(i = (indexId+1); i < list->numberItems; i++)
+    {
+       addTaskItemToTaskList(newList, &list->items[i]);
+    }
+    list->items = newList->items;
+    list->numberItems = newList->numberItems;  
+}

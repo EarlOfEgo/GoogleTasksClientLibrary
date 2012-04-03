@@ -65,11 +65,12 @@ int main()
     }
 
     /* Add the tests to the suite */
-    if ((CU_add_test(pSuite_TaskLists, "test_addAndDeleteAnItem", test_addAndDeleteAnItem) == NULL) ||
+    if ((CU_add_test(pSuite_TaskLists, "test_addAndDeleteAnItem", test_addAndDeleteAnItemFromTaskLists_list) == NULL) ||
             (CU_add_test(pSuite_TaskLists, "test_addAndDeleteMoreItems", test_addAndDeleteMoreItems)  == NULL) ||
             (CU_add_test(pSuite_TaskLists, "test_createNewItem", test_createNewItem)  == NULL) ||
             (CU_add_test(pSuite_TaskTasks, "test_createTaskLink", test_createTaskLink)  == NULL) ||
-            (CU_add_test(pSuite_TaskTasks, "test_addAndDeleteAnLink", test_addAndDeleteAnLink)  == NULL)
+            (CU_add_test(pSuite_TaskTasks, "test_addAndDeleteAnLink", test_addAndDeleteALink)  == NULL) ||
+            (CU_add_test(pSuite_TaskTasks, "test_addAndDeleteAnItemFromTaskList", test_addAndDeleteAnItemFromTaskList)  == NULL)
             )
     {
         CU_cleanup_registry();

@@ -54,12 +54,15 @@ typedef struct
     char *nextPageToken;/*Token used to access the next page of this result.*/        
     int numberItems;    /*Number of items*/ 
     TaskItem *items;    /*Collection of tasks.*/
-}TaskTasks;
+}TaskList;
 
 TaskLink* createNewTaskLinks(json_value *value);
 
 void addLinkToTaskItem(TaskItem *item, TaskLink *link);
 void deleteLinkFromTaskItem(TaskItem *item, char *description);
+
+void addTaskItemToTaskList(TaskList *list, TaskItem *item);
+void deleteTaskItemFromTaskList(TaskList *list, char *id);
 
 #ifdef	__cplusplus
 extern "C" {

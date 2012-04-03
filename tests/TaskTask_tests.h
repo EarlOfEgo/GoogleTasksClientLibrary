@@ -17,12 +17,12 @@ char *valid_json_task_links = "{                \
       \"link\": \"link_string\"                     \
     }";
 
-TaskTasks *tasks;
+TaskList *tasks;
 TaskItem *item;
 
 int init_suite_TaskTasks(void)
 {
-    tasks = malloc(sizeof(TaskTasks));
+    tasks = malloc(sizeof(TaskList));
     item = malloc(sizeof(TaskItem));
     return 0;
 }
@@ -42,16 +42,16 @@ void test_createTaskLink(void)
     json_value * value = json_parse_ex(&settings, valid_json_task_links, error);
     TaskLink *link = createNewTaskLinks(value);
     CU_ASSERT_PTR_NOT_NULL(link);
-//    if(link != NULL)
+    if(link != NULL)
     {
-//        CU_ASSERT_STRING_EQUAL(link->description, "description_string");
-//        CU_ASSERT_STRING_EQUAL(link->link, "link_string");
-//        CU_ASSERT_STRING_EQUAL(link->type, "type_string"); 
+        CU_ASSERT_STRING_EQUAL(link->description, "description_string");
+        CU_ASSERT_STRING_EQUAL(link->link, "link_string");
+        CU_ASSERT_STRING_EQUAL(link->type, "type_string"); 
     }
     
 }
 
-void test_addAndDeleteAnLink()
+void test_addAndDeleteALink()
 {
     
     TaskLink *link = malloc(sizeof(TaskLink));
@@ -76,6 +76,25 @@ void test_addAndDeleteAnLink()
     CU_ASSERT_PTR_NULL(&item->links[0]);
     
     free(link);
+}
+
+
+void test_addAndDeleteAnItemFromTaskList()
+{
+    item->id = "1";
+    addTaskItemToTaskList(tasks, item);
+    CU_ASSERT_EQUAL(tasks->numberItems, 1);
+    CU_ASSERT_PTR_NOT_NULL(&tasks->items[0]); 
+    
+    deleteTaskItemFromTaskList(tasks, "2");
+    CU_ASSERT_EQUAL(tasks->numberItems, 1);
+    CU_ASSERT_PTR_NOT_NULL(tasks);
+    CU_ASSERT_PTR_NOT_NULL(&tasks->items[0]);
+    
+    deleteTaskItemFromTaskList(tasks, "1");
+    CU_ASSERT_EQUAL(tasks->numberItems, 0);
+    CU_ASSERT_PTR_NOT_NULL(tasks);
+    CU_ASSERT_PTR_NULL(&tasks->items[0]);
 }
 
 
