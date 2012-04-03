@@ -89,8 +89,8 @@ TaskLists_Lists* createNewTaskLists_ListsFromJson(char *jsonResponse)
                strcpy(newList->nextPageToken, value->u.object.values[i].value->u.string.ptr);
            }
            else if(value->u.object.values[i].value->type == json_array)
-               for(j = 0; j < value->u.object.values[i].value->u.array.length; i++)
-                    addItemToTaskLists_Lists(newList, createNewItem(value->u.object.values[i].value->u.array.values[j]));
+               for(j = 0; j < value->u.object.values[i].value->u.array.length; j++)
+                    addItemToTaskLists_Lists(newList, createNewTaskListItem(value->u.object.values[i].value->u.array.values[j]));
         }
         json_value_free(value); 
         return newList;
@@ -99,7 +99,7 @@ TaskLists_Lists* createNewTaskLists_ListsFromJson(char *jsonResponse)
 }
 
 
-TaskListItem* createNewItem(json_value * value)
+TaskListItem* createNewTaskListItem(json_value * value)
 {
     int i;
     TaskListItem *item = malloc(sizeof(TaskListItem));

@@ -43,7 +43,7 @@ typedef struct
     char *deleted;      /*Flag indicating whether the task has been deleted. The default if False.*/
     char *hidden;       /*Flag indicating whether the task is hidden. This is the case if the task had been marked completed when the task list was last cleared. The default is False. This field is read-only.*/
     int numberLinks;    /*Number of links*/
-    TaskLink *links;   /*Collection of links. This collection is read-only.*/
+    TaskLink *links;    /*Collection of links. This collection is read-only.*/
     
 }TaskItem;
 
@@ -58,11 +58,15 @@ typedef struct
 
 TaskLink* createNewTaskLinks(json_value *value);
 
+TaskList* createNewTaskListFromJson(char *json);
+
 void addLinkToTaskItem(TaskItem *item, TaskLink *link);
 void deleteLinkFromTaskItem(TaskItem *item, char *description);
 
 void addTaskItemToTaskList(TaskList *list, TaskItem *item);
 void deleteTaskItemFromTaskList(TaskList *list, char *id);
+
+TaskItem *createNewTaskItem(json_value *value);
 
 #ifdef	__cplusplus
 extern "C" {

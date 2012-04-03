@@ -1,4 +1,5 @@
 #include "TaskTasks.h"
+#include "TaskLists.h"
 
 TaskLink* createNewTaskLinks(json_value *value)
 {
@@ -142,4 +143,52 @@ void deleteTaskItemFromTaskList(TaskList *list, char *id)
     }
     list->items = newList->items;
     list->numberItems = newList->numberItems;  
+}
+
+
+TaskList* createNewTaskListFromJson(char *json)
+{
+    
+    json_settings settings;
+    memset(&settings, 0, sizeof (json_settings));
+    char error[256];
+    json_value * value = json_parse_ex(&settings, json, error);
+
+
+    if(value != NULL)
+    {
+        TaskList* newTaskList = malloc(sizeof(TaskList));
+        int i, j;
+        for(i = 0; i < value->u.object.length; i++)
+        {
+            printf("%s<->%d\n", value->u.object.values[i].name, value->u.object.values[i].value->type);
+            if(value->u.object.values[i].value->type != json_array)
+            {
+                if(strcmp(value->u.object.values[i].name, KIND_STRING) == 0)
+                {
+                    newTaskList->kind = malloc(sizeof(KIND_STRING));
+                    strcpy(newTaskList->kind, KIND_STRING);
+                }
+                else if(strcmp(value->u.object.values[i].name, ETAG_STRING) == 0)
+                {
+                    newTaskList->etag = malloc(sizeof(ETAG_STRING));
+                    strcpy(newTaskList->etag, ETAG_STRING);
+                }
+            }
+            else
+               for(j = 0; j < value->u.object.values[i].value->u.array.length; j++)
+                   addTaskItemToTaskList(newTaskList, createNewTaskItem(value->u.object.values[i].value->u.array.values[j]));
+        }
+        free(value);
+        return newTaskList;
+    }
+    
+    return NULL;
+}
+
+
+TaskItem *createNewTaskItem(json_value *value)
+{
+    TaskItem * new = malloc(sizeof(TaskItem));
+    return new;
 }

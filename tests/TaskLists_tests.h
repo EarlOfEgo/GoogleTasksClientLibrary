@@ -97,7 +97,7 @@ void test_createNewItem()
     memset(&settings, 0, sizeof (json_settings));
     char error[256];
     json_value * value = json_parse_ex(&settings, json_taskList_valid, error);
-    TaskListItem *item =  createNewItem(value);
+    TaskListItem *item =  createNewTaskListItem(value);
     CU_ASSERT_PTR_NOT_NULL(item);
 
     CU_ASSERT_STRING_EQUAL(item->kind, "tasks#taskList");

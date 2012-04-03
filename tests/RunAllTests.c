@@ -70,7 +70,8 @@ int main()
             (CU_add_test(pSuite_TaskLists, "test_createNewItem", test_createNewItem)  == NULL) ||
             (CU_add_test(pSuite_TaskTasks, "test_createTaskLink", test_createTaskLink)  == NULL) ||
             (CU_add_test(pSuite_TaskTasks, "test_addAndDeleteAnLink", test_addAndDeleteALink)  == NULL) ||
-            (CU_add_test(pSuite_TaskTasks, "test_addAndDeleteAnItemFromTaskList", test_addAndDeleteAnItemFromTaskList)  == NULL)
+            (CU_add_test(pSuite_TaskTasks, "test_addAndDeleteAnItemFromTaskList", test_addAndDeleteAnItemFromTaskList)  == NULL) ||
+            (CU_add_test(pSuite_TaskTasks, "test_createNewTaskListFromJson", test_createNewTaskListFromJson)  == NULL)
             )
     {
         CU_cleanup_registry();
