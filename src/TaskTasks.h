@@ -17,6 +17,14 @@
 #define TYPE_STRING "type"
 #define DESCRIPTION_STRING "description"
 #define LINK_STRING "link"
+#define PARENT_STRING "parent"
+#define POSITION_STRING "position"
+#define NOTES_STRING "notes"
+#define STATUS_STRING "status"
+#define DUE_STRING "due"
+#define COMPLETED_STRING "completed"
+#define DELETED_STRING "deleted"
+#define HIDDEN_STRING "hidden"
 
 
 typedef struct

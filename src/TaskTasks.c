@@ -109,7 +109,7 @@ void addTaskItemToTaskList(TaskList *list, TaskItem *item)
             return;
         }
     }
-    list->items = (TaskList*) tmp;
+    list->items = (TaskItem*) tmp;
     list->items[list->numberItems++] = *item;
 }
 
@@ -161,23 +161,22 @@ TaskList* createNewTaskListFromJson(char *json)
         int i, j;
         for(i = 0; i < value->u.object.length; i++)
         {
-            printf("%s<->%d\n", value->u.object.values[i].name, value->u.object.values[i].value->type);
             if(value->u.object.values[i].value->type != json_array)
             {
                 if(strcmp(value->u.object.values[i].name, KIND_STRING) == 0)
                 {
-                    newTaskList->kind = malloc(sizeof(KIND_STRING));
-                    strcpy(newTaskList->kind, KIND_STRING);
+                    newTaskList->kind = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newTaskList->kind, value->u.object.values[i].value->u.string.ptr);
                 }
                 else if(strcmp(value->u.object.values[i].name, ETAG_STRING) == 0)
                 {
-                    newTaskList->etag = malloc(sizeof(ETAG_STRING));
-                    strcpy(newTaskList->etag, ETAG_STRING);
+                    newTaskList->etag = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newTaskList->etag, value->u.object.values[i].value->u.string.ptr);
                 }
             }
             else
                for(j = 0; j < value->u.object.values[i].value->u.array.length; j++)
-                   addTaskItemToTaskList(newTaskList, createNewTaskItem(value->u.object.values[i].value->u.array.values[j]));
+                   ;//addTaskItemToTaskList(newTaskList, createNewTaskItem(value->u.object.values[i].value->u.array.values[j]));
         }
         free(value);
         return newTaskList;
@@ -189,6 +188,96 @@ TaskList* createNewTaskListFromJson(char *json)
 
 TaskItem *createNewTaskItem(json_value *value)
 {
-    TaskItem * new = malloc(sizeof(TaskItem));
-    return new;
+    if(value != NULL)
+    {
+        TaskItem *newItem = malloc(sizeof(TaskItem));
+        int i, j;
+        for(i = 0; i < value->u.object.length; i++)
+        {
+            if(value->u.object.values[i].value->type != json_array)
+            {
+                if(strcmp(value->u.object.values[i].name, KIND_STRING) == 0)
+                {
+                    newItem->kind = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newItem->kind, value->u.object.values[i].value->u.string.ptr);
+                }
+                else if(strcmp(value->u.object.values[i].name, ID_STRING) == 0)
+                {
+                    newItem->id = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newItem->id, value->u.object.values[i].value->u.string.ptr);
+                }
+                else if(strcmp(value->u.object.values[i].name, ETAG_STRING) == 0)
+                {
+                    newItem->etag = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newItem->etag, value->u.object.values[i].value->u.string.ptr);
+                }
+                else if(strcmp(value->u.object.values[i].name,TITLE_STRING) == 0)
+                {
+                    newItem->title = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newItem->title, value->u.object.values[i].value->u.string.ptr);
+                }
+                else if(strcmp(value->u.object.values[i].name, UPDATED_STRING) == 0)
+                {
+                    newItem->updated = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newItem->updated, value->u.object.values[i].value->u.string.ptr);
+                }
+                else if(strcmp(value->u.object.values[i].name, ETAG_STRING) == 0)
+                {
+                    newItem->etag = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newItem->etag, value->u.object.values[i].value->u.string.ptr);
+                }
+                else if(strcmp(value->u.object.values[i].name, SELFLINK_STRING) == 0)
+                {
+                    newItem->selfLink = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newItem->selfLink, value->u.object.values[i].value->u.string.ptr);
+                }
+                else if(strcmp(value->u.object.values[i].name, PARENT_STRING) == 0)
+                {
+                    newItem->parent = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newItem->parent, value->u.object.values[i].value->u.string.ptr);
+                }
+                else if(strcmp(value->u.object.values[i].name, POSITION_STRING) == 0)
+                {
+                    newItem->position = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newItem->position, value->u.object.values[i].value->u.string.ptr);
+                }
+                else if(strcmp(value->u.object.values[i].name, NOTES_STRING) == 0)
+                {
+                    newItem->notes = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newItem->notes, value->u.object.values[i].value->u.string.ptr);
+                }
+                else if(strcmp(value->u.object.values[i].name, STATUS_STRING) == 0)
+                {
+                    newItem->status = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newItem->status, value->u.object.values[i].value->u.string.ptr);
+                }
+                else if(strcmp(value->u.object.values[i].name, DUE_STRING) == 0)
+                {
+                    newItem->due = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newItem->due, value->u.object.values[i].value->u.string.ptr);
+                }
+                else if(strcmp(value->u.object.values[i].name, COMPLETED_STRING) == 0)
+                {
+                    newItem->completed = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newItem->completed, value->u.object.values[i].value->u.string.ptr);
+                }
+                else if(strcmp(value->u.object.values[i].name, DELETED_STRING) == 0)
+                {
+                    newItem->deleted = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newItem->deleted, value->u.object.values[i].value->u.string.ptr);
+                }
+                else if(strcmp(value->u.object.values[i].name, HIDDEN_STRING) == 0)
+                {
+                    newItem->hidden = malloc(value->u.object.values[i].value->u.string.length);
+                    strcpy(newItem->hidden, value->u.object.values[i].value->u.string.ptr);
+                }
+            }
+            else
+                for(j = 0; j < value->u.object.values[i].value->u.array.length; j++)
+                    ;//TODO
+        }
+    }
+    
+        
+    return NULL;
 }
