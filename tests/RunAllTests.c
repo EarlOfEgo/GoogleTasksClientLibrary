@@ -39,17 +39,10 @@
 #include "TaskLists_tests.h"
 #include "TaskTask_tests.h"
 
-
-
-
-/* The main() function for setting up and running the tests.
- * Returns a CUE_SUCCESS on successful running, another
- * CUnit error code on failure.
- */
-int main()
+void runSuite1()
 {
     CU_pSuite pSuite_TaskLists = NULL;
-    CU_pSuite pSuite_TaskTasks = NULL;
+    
 
     /* Initialize the CUnit test registry */
     if (CUE_SUCCESS != CU_initialize_registry())
@@ -57,8 +50,8 @@ int main()
 
     /* Add a suite to the registry */
     pSuite_TaskLists = CU_add_suite("TaskLists_tests", init_suite_TaskLists, clean_suite_TaskLists);
-    pSuite_TaskTasks = CU_add_suite("TaskTasks_tests", init_suite_TaskTasks, clean_suite_TaskTasks);
-    if (pSuite_TaskTasks == NULL || pSuite_TaskTasks == NULL)
+    
+    if (pSuite_TaskLists == NULL)
     {
         CU_cleanup_registry();
         return CU_get_error();
@@ -67,8 +60,30 @@ int main()
     /* Add the tests to the suite */
     if ((CU_add_test(pSuite_TaskLists, "test_addAndDeleteAnItem", test_addAndDeleteAnItemFromTaskLists_list) == NULL) ||
             (CU_add_test(pSuite_TaskLists, "test_addAndDeleteMoreItems", test_addAndDeleteMoreItems)  == NULL) ||
-            (CU_add_test(pSuite_TaskLists, "test_createNewItem", test_createNewItem)  == NULL) ||
-            (CU_add_test(pSuite_TaskTasks, "test_createTaskLink", test_createTaskLink)  == NULL) ||
+            (CU_add_test(pSuite_TaskLists, "test_createNewItem", test_createNewItem)  == NULL)
+            )
+    {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+
+    /* Run all tests using the CUnit Basic interface */
+    CU_basic_set_mode(CU_BRM_VERBOSE);
+    CU_basic_run_tests();
+    CU_cleanup_registry();
+}
+
+void runSuite2()
+{
+    CU_pSuite pSuite_TaskTasks = NULL;
+    pSuite_TaskTasks = CU_add_suite("TaskTasks_tests", init_suite_TaskTasks, clean_suite_TaskTasks);
+     if (pSuite_TaskTasks == NULL)
+    {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+    
+     if ((CU_add_test(pSuite_TaskTasks, "test_createTaskLink", test_createTaskLink)  == NULL) ||
             (CU_add_test(pSuite_TaskTasks, "test_addAndDeleteAnLink", test_addAndDeleteALink)  == NULL) ||
             (CU_add_test(pSuite_TaskTasks, "test_addAndDeleteAnItemFromTaskList", test_addAndDeleteAnItemFromTaskList)  == NULL) ||
             (CU_add_test(pSuite_TaskTasks, "test_createNewTaskListFromJson", test_createNewTaskListFromJson)  == NULL)
@@ -82,5 +97,20 @@ int main()
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();
+}
+
+
+
+
+/* The main() function for setting up and running the tests.
+ * Returns a CUE_SUCCESS on successful running, another
+ * CUnit error code on failure.
+ */
+int main()
+{
+    runSuite1();
+    runSuite2();
+    
+    
     return CU_get_error();
 }

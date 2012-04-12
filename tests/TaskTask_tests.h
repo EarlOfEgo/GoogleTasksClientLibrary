@@ -46,20 +46,16 @@ char *valid_json_task_list = "{                 \
         }";
 
 
-TaskList *tasks;
-TaskItem *item;
+
+
 
 int init_suite_TaskTasks(void)
 {
-    tasks = malloc(sizeof(TaskList));
-    item = malloc(sizeof(TaskItem));
     return 0;
 }
 
 int clean_suite_TaskTasks(void)
-{
-    free(tasks);
-    free(item);
+{ 
     return 0;
 }
 
@@ -68,7 +64,8 @@ void test_createTaskLink(void)
     json_settings settings;
     memset(&settings, 0, sizeof (json_settings));
     char error[256];
-    json_value * value = json_parse_ex(&settings, valid_json_task_links, error);
+//    json_value * value = json_parse_ex(&settings, valid_json_task_links, error);
+    json_value *value= json_parse(valid_json_task_links);
     TaskLink *link = createNewTaskLinks(value);
     CU_ASSERT_PTR_NOT_NULL(link);
     if(link != NULL)
@@ -77,7 +74,7 @@ void test_createTaskLink(void)
         CU_ASSERT_STRING_EQUAL(link->link, "link_string");
         CU_ASSERT_STRING_EQUAL(link->type, "type_string"); 
     }
-    free(value);
+  //  json_value_free(value);
     free(link);
 }
 
@@ -87,6 +84,8 @@ void test_addAndDeleteALink()
     TaskLink *link = malloc(sizeof(TaskLink));
     
     link->description = "1";
+    TaskItem *item = malloc(sizeof(TaskItem));
+    item->numberLinks = 0;
     
     addLinkToTaskItem(item, link);
     
@@ -111,11 +110,15 @@ void test_addAndDeleteALink()
 
 void test_addAndDeleteAnItemFromTaskList()
 {
+    TaskList *tasks = malloc(sizeof(TaskList));
+    tasks->numberItems = 0;
+    TaskItem *item = malloc(sizeof(TaskItem));
     item->id = "1";
+    
     addTaskItemToTaskList(tasks, item);
     CU_ASSERT_EQUAL(tasks->numberItems, 1);
     CU_ASSERT_PTR_NOT_NULL(&tasks->items[0]); 
-    
+
     deleteTaskItemFromTaskList(tasks, "2");
     CU_ASSERT_EQUAL(tasks->numberItems, 1);
     CU_ASSERT_PTR_NOT_NULL(tasks);
@@ -125,12 +128,15 @@ void test_addAndDeleteAnItemFromTaskList()
     CU_ASSERT_EQUAL(tasks->numberItems, 0);
     CU_ASSERT_PTR_NOT_NULL(tasks);
     CU_ASSERT_PTR_NULL(&tasks->items[0]);
+
+    free(tasks);
 }
 
 
 void test_createNewTaskListFromJson()
 {
-    TaskList * list = malloc(sizeof(TaskList));
-    createNewTaskListFromJson(valid_json_task_list);
+    TaskList *list = malloc(sizeof(TaskList));
+    list = createNewTaskListFromJson(valid_json_task_list);
+    printf("%s!!\n", list->kind);
     CU_ASSERT_PTR_NOT_NULL(list);
 }

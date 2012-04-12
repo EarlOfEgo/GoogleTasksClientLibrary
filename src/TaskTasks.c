@@ -149,11 +149,7 @@ void deleteTaskItemFromTaskList(TaskList *list, char *id)
 TaskList* createNewTaskListFromJson(char *json)
 {
     
-    json_settings settings;
-    memset(&settings, 0, sizeof (json_settings));
-    char error[256];
-    json_value * value = json_parse_ex(&settings, json, error);
-
+    json_value *value = json_parse(json);
 
     if(value != NULL)
     {
@@ -176,11 +172,12 @@ TaskList* createNewTaskListFromJson(char *json)
             }
             else
                for(j = 0; j < value->u.object.values[i].value->u.array.length; j++)
-                   ;//addTaskItemToTaskList(newTaskList, createNewTaskItem(value->u.object.values[i].value->u.array.values[j]));
+                   addTaskItemToTaskList(newTaskList, createNewTaskItem(value->u.object.values[i].value->u.array.values[j]));
         }
-        free(value);
+        json_value_free(value);
         return newTaskList;
     }
+
     
     return NULL;
 }
@@ -274,10 +271,9 @@ TaskItem *createNewTaskItem(json_value *value)
             }
             else
                 for(j = 0; j < value->u.object.values[i].value->u.array.length; j++)
-                    ;//TODO
+                    addLinkToTaskItem(newItem, createNewTaskLinks(value->u.object.values[i].value->u.array.values[j]));
         }
-    }
-    
-        
+        return newItem;
+    }       
     return NULL;
 }

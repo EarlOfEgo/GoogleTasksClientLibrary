@@ -76,6 +76,7 @@ void deleteTaskItemFromTaskList(TaskList *list, char *id);
 
 TaskItem *createNewTaskItem(json_value *value);
 
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
