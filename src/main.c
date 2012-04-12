@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
     }
 */
     
-    printf("%s!!!\n\n", buildAccessTokenRequest());
+    printf("%s\n\n", buildAccessTokenRequest());
     char *token = "";
     char *args = buildPostFields(token);
 

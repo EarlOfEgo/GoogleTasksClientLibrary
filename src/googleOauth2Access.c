@@ -219,3 +219,8 @@ char *readClientSecret()
     
     return ret_val;
 }
+
+void processIncommingTokenResponse(char *response)
+{
+    //TODO :-)
+}

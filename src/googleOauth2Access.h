@@ -46,6 +46,16 @@ size_t static validateAccessTokenCallback(void *ptr, size_t size, size_t nmemb, 
 char *readClientId();
 char *readClientSecret();
 
+typedef struct
+{
+    char *access_token;
+    char *token_type;
+    char *expires_in;
+    char *refresh_token;
+}TokenResponse;
+
+void processIncommingTokenResponse(char *response);
+
 FILE *fd;
 
 
