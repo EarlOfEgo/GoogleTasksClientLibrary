@@ -38,8 +38,8 @@ int clean_suite(void)
 
 void testAddItemToTaskLists_Lists()
 {
-    TaskLists_Lists* taskLists_Lists;
-    TaskListItem* item;
+    TaskLists_Lists* taskLists_Lists = malloc(sizeof(TaskLists_Lists));
+    TaskListItem* item = malloc(sizeof(TaskListItem));
     addItemToTaskLists_Lists(taskLists_Lists, item);
     if (1 /*check result*/)
     {

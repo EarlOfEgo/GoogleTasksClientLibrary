@@ -25,7 +25,7 @@
  * Builds the access token request, the user has to copy this address into his browser and allow the application to access his account.
  * @return the url as a string.
  */
-char *buildAccessTokenRequestAsHtmlRequest()
+char *buildAccessTokenRequestAsHtmlRequest() //TODO: REFACTOR AFTER ALL TESTS SUCCEED.... //TODO: WRITE TESTS!!
 {
     int str_lenght = strlen(AUTH_SERVER) + 1;
     char *ret_value = malloc(str_lenght * sizeof (char));
@@ -100,7 +100,7 @@ char *buildAccessTokenRequestAsHtmlRequest()
  * @param accessTokenCode
  * @return the post fields as a string
  */
-char *buildPostFieldsForRequestingAnAccessToken(char *accessTokenCode)
+char *buildPostFieldsForRequestingAnAccessToken(char *accessTokenCode)//TODO: REFACTOR AFTER ALL TESTS SUCCEED.... //TODO: WRITE TESTS!!
 {
     int str_lenght = strlen(CODE_STRING) + 1;
     char *ret_value = malloc(str_lenght * sizeof (char));
@@ -168,7 +168,7 @@ char *buildPostFieldsForRequestingAnAccessToken(char *accessTokenCode)
  * @param refreshToken
  * @return 
  */
-char *buildPostFieldsForRefreshingTheAccessToken(char *refreshToken)
+char *buildPostFieldsForRefreshingTheAccessToken(char *refreshToken)//TODO: REFACTOR AFTER ALL TESTS SUCCEED.... //TODO: WRITE TESTS!!
 {
     int str_lenght = strlen(REFRESH_TOKEN_STRING) + 1;
     char *ret_value = malloc(str_lenght * sizeof (char));
@@ -215,6 +215,8 @@ char *buildPostFieldsForRefreshingTheAccessToken(char *refreshToken)
     str_lenght += strlen(REFRESH_TOKEN);
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, REFRESH_TOKEN);
+    
+    return ret_value;
 }
 
 /**
@@ -266,6 +268,10 @@ size_t static httpsCallback(void *ptr, size_t size, size_t nmemb, void *data)
     *res_ptr = strndup(ptr, (size_t) (size * nmemb));
 }
 
+/**
+ * Reads the client id, at the moment it is stored in a file on my machine :-)
+ * @return client id
+ */
 char *readClientId()
 {
 
@@ -287,6 +293,10 @@ char *readClientId()
     return ret_val;
 }
 
+/**
+ * Reads the client secret, at the moment it is stored in a file on my machine :-)
+ * @return client secret
+ */
 char *readClientSecret()
 {
     char str[200];
@@ -364,7 +374,7 @@ TokenResponse *processIncomingAccessTokenResponse(char *response)
  * @param refreshToken
  * @return TokenResponse struct
  */
-TokenResponse *processIncomingTokenResponse(char *response, char *refreshToken)
+TokenResponse *processIncomingRefreshTokenResponse(char *response, char *refreshToken)
 {
     json_value *value = json_parse(response);
     TokenResponse *tokenResponse = malloc(sizeof (TokenResponse));

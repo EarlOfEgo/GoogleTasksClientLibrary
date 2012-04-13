@@ -38,8 +38,8 @@ int clean_suite(void)
 
 void testAddLinkToTaskItem()
 {
-    TaskItem* item;
-    TaskLink* link;
+    TaskItem* item = malloc(sizeof(TaskItem));
+    TaskLink* link = malloc(sizeof(TaskLink));
     addLinkToTaskItem(item, link);
     if (1 /*check result*/)
     {
@@ -49,9 +49,9 @@ void testAddLinkToTaskItem()
 
 void testAddTaskItemToTaskList()
 {
-    TaskList* list;
-    TaskItem* item;
-    addTaskItemToTaskList(list, item);
+    TaskList* list = malloc(sizeof(TaskList));
+    TaskItem* item = malloc(sizeof(TaskItem));
+ //   addTaskItemToTaskList(list, item);
     if (1 /*check result*/)
     {
         CU_ASSERT(0);
@@ -60,7 +60,7 @@ void testAddTaskItemToTaskList()
 
 void testCreateNewTaskItem()
 {
-    json_value* value;
+    json_value* value = json_parse("[]");
     TaskItem* result = createNewTaskItem(value);
     if (1 /*check result*/)
     {
@@ -70,7 +70,7 @@ void testCreateNewTaskItem()
 
 void testCreateNewTaskLinks()
 {
-    json_value* value;
+    json_value* value = json_parse("[]");
     TaskLink* result = createNewTaskLinks(value);
     if (1 /*check result*/)
     {
@@ -80,7 +80,7 @@ void testCreateNewTaskLinks()
 
 void testCreateNewTaskListFromJson()
 {
-    char* json;
+    char* json = "";
     TaskList* result = createNewTaskListFromJson(json);
     if (1 /*check result*/)
     {
@@ -90,8 +90,8 @@ void testCreateNewTaskListFromJson()
 
 void testDeleteLinkFromTaskItem()
 {
-    TaskItem* item;
-    char* description;
+    TaskItem* item = malloc(sizeof(TaskItem));
+    char* description = "";
     deleteLinkFromTaskItem(item, description);
     if (1 /*check result*/)
     {
@@ -101,8 +101,8 @@ void testDeleteLinkFromTaskItem()
 
 void testDeleteTaskItemFromTaskList()
 {
-    TaskList* list;
-    char* id;
+    TaskList* list = malloc(sizeof(TaskList));
+    char* id = "";
     deleteTaskItemFromTaskList(list, id);
     if (1 /*check result*/)
     {
