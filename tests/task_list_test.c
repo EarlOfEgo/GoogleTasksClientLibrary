@@ -194,7 +194,7 @@ void testCreateNewTaskLists_ListsFromJson()
     CU_ASSERT_STRING_EQUAL(result->kind, "tasks#taskLists");
     CU_ASSERT_STRING_EQUAL(result->nextPageToken, "nextPageToken_string");
     
-    CU_ASSERT_PTR_NOT_NULL_FATAL(result->items[0]);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->items);
     CU_ASSERT_PTR_NOT_NULL_FATAL(result->items[0].etag);
     CU_ASSERT_PTR_NOT_NULL_FATAL(result->items[0].id);
     CU_ASSERT_PTR_NOT_NULL_FATAL(result->items[0].kind);
@@ -212,12 +212,30 @@ void testCreateNewTaskLists_ListsFromJson()
 
 void testDeleteItemFromTaskLists_list()
 {
-    TaskLists_Lists* taskLists_Lists;
-    char* item;
-    deleteItemFromTaskLists_list(taskLists_Lists, item);
-    if (1 /*check result*/)
+    TaskLists_Lists* taskLists_Lists = malloc(sizeof (TaskLists_Lists));
+    CU_ASSERT_PTR_NOT_NULL_FATAL(taskLists_Lists);
+    int i;
+    for (i = 0; i < 27; i++)
     {
-        CU_ASSERT(1);
+        TaskListItem* item = malloc(sizeof (TaskListItem));
+        item->id = (char *) malloc(2);
+        item->id[0] = (char) i + 64;
+        item->id[1] = '\0';
+        CU_ASSERT_PTR_NOT_NULL_FATAL(item);
+
+        addItemToTaskLists_Lists(taskLists_Lists, item);
+
+    }
+    
+    for(i = 0; i < 27; i++)
+    {
+        char* item = (char *) malloc(2);
+        item[0] = (char) i + 64;
+        item[1] = '\0';
+        CU_ASSERT_EQUAL(taskLists_Lists->numberItems, 27 - i);
+        deleteItemFromTaskLists_list(taskLists_Lists, item);
+        CU_ASSERT_EQUAL(taskLists_Lists->numberItems, 26 - i);
+        free(item);      
     }
 }
 

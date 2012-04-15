@@ -108,7 +108,6 @@ TaskListItem* createNewTaskListItem(json_value * value)
     if (value != NULL)
     {
         int i;
-        
         TaskListItem *item = malloc(sizeof (TaskListItem));
         for (i = 0; i < value->u.object.length; i++)
         {
