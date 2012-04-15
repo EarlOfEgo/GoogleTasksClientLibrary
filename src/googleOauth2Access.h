@@ -79,8 +79,6 @@ TokenResponse *processIncomingRefreshTokenResponse(char *response, char *refresh
 
 
 
-FILE *fd;
-
 
 
 #ifdef	__cplusplus

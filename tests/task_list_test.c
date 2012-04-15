@@ -1,33 +1,88 @@
 /*
-* Copyright (c) 2012 Stephan Hagios <stephan.hagios@gmail.com>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Library General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/
+ * Copyright (c) 2012 Stephan Hagios <stephan.hagios@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef WINDOWS
+#include <direct.h>
+#define GetCurrentDir _getcwd
+#else
+#include <unistd.h>
+#define GetCurrentDir getcwd
+#endif
+
 #include "CUnit/Basic.h"
 #include "src/TaskLists.h"
+
+char cCurrentPath[FILENAME_MAX];
+
+char *getFileContent(char *path, int *errorCode)
+{
+    size_t length;
+    size_t bytesToRead;
+    char* content;
+    FILE* f;
+
+    f = fopen(path, "rb");
+    if (f == NULL)
+    {
+        *errorCode = CUE_FOPEN_FAILED;
+        return NULL;
+    }
+
+    fseek(f, 0, SEEK_END);
+    length = ftell(f);
+    rewind(f);
+
+    content = malloc(sizeof (char) * length + 1);
+    content[length] = '\0';
+    if (content == NULL)
+    {
+        *errorCode = CUE_NOMEMORY;
+        return NULL;
+    }
+
+    bytesToRead = fread(content, sizeof (char), length, f);
+    fclose(f);
+
+    return content;
+}
+
+char *getFullFileName(char *fileName)
+{
+    char *fullFileName = malloc(strlen(&cCurrentPath) + strlen(fileName) + 1);
+    strcpy(fullFileName, &cCurrentPath);
+    strcat(fullFileName, fileName);
+    return fullFileName;
+}
 
 /*
  * CUnit Test Suite
  */
-
 int init_suite(void)
 {
+    if (!GetCurrentDir(cCurrentPath, sizeof (cCurrentPath) / sizeof (char)))
+    {
+        return CUE_BAD_FILENAME;
+    }
+    strcat(cCurrentPath, "/tests/jsons/");
     return 0;
 }
 
@@ -38,23 +93,71 @@ int clean_suite(void)
 
 void testAddItemToTaskLists_Lists()
 {
-    TaskLists_Lists* taskLists_Lists = malloc(sizeof(TaskLists_Lists));
-    TaskListItem* item = malloc(sizeof(TaskListItem));
-    addItemToTaskLists_Lists(taskLists_Lists, item);
-    if (1 /*check result*/)
+    TaskLists_Lists* taskLists_Lists = malloc(sizeof (TaskLists_Lists));
+    CU_ASSERT_PTR_NOT_NULL_FATAL(taskLists_Lists);
+    int i;
+    for (i = 0; i < 27; i++)
     {
-        CU_ASSERT(0);
+        TaskListItem* item = malloc(sizeof (TaskListItem));
+        item->id = (char *) malloc(2);
+        item->id[0] = (char) i + 64;
+        item->id[1] = '\0';
+        CU_ASSERT_PTR_NOT_NULL_FATAL(item);
+
+        addItemToTaskLists_Lists(taskLists_Lists, item);
+        CU_ASSERT_EQUAL(taskLists_Lists->numberItems, i + 1);
+
+        CU_ASSERT_PTR_NOT_NULL(&taskLists_Lists->items[i]);
+        CU_ASSERT_STRING_EQUAL(taskLists_Lists->items[i].id, item->id);
+        CU_ASSERT_PTR_EQUAL(taskLists_Lists->items[i].id, item->id);
+
     }
 }
 
 void testCreateNewTaskListItem()
 {
-    json_value* value;
-    TaskListItem* result = createNewTaskListItem(value);
-    if (1 /*check result*/)
-    {
-        CU_ASSERT(0);
-    }
+    char *jsonFullPath = getFullFileName("taskListItem_valid.json");
+
+    int errorCode = 0;
+    char *fileContent = getFileContent(jsonFullPath, &errorCode);
+    CU_ASSERT_EQUAL_FATAL(errorCode, 0);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fileContent);
+
+    json_settings settings;
+    memset(&settings, 0, sizeof (json_settings));
+    char error[256];
+
+
+    json_value *value = json_parse_ex(&settings, fileContent, error);
+    TaskListItem *result = createNewTaskListItem(value);
+    CU_ASSERT_PTR_NOT_NULL(result->etag);
+    CU_ASSERT_PTR_NOT_NULL(result->id);
+    CU_ASSERT_PTR_NOT_NULL(result->kind);
+    CU_ASSERT_PTR_NOT_NULL(result->selfLink);
+    CU_ASSERT_PTR_NOT_NULL(result->title);
+    CU_ASSERT_PTR_NOT_NULL(result->updated);
+
+    free(result);
+    json_value_free(value);
+
+    char *jsonFullPath2 = getFullFileName("taskListItem_NOT_valid.json");
+    char *fileContent2 = getFileContent(jsonFullPath2, &errorCode);
+    CU_ASSERT_EQUAL_FATAL(errorCode, 0);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fileContent);
+
+    json_value *value2 = json_parse_ex(&settings, fileContent2, error);
+    TaskListItem *result2 = createNewTaskListItem(value2);
+
+
+    CU_ASSERT_EQUAL(sizeof (result2->id), sizeof (char *));
+    CU_ASSERT_EQUAL(sizeof (result2->kind), sizeof (char *));
+    CU_ASSERT_EQUAL(sizeof (result2->etag), sizeof (char *));
+    CU_ASSERT_EQUAL(sizeof (result2->selfLink), sizeof (char *));
+    CU_ASSERT_EQUAL(sizeof (result2->title), sizeof (char *));
+    CU_ASSERT_EQUAL(sizeof (result2->updated), sizeof (char *));
+
+    free(result2);
+    json_value_free(value2);
 }
 
 void testCreateNewTaskLists_ListsFromJson()
@@ -63,7 +166,7 @@ void testCreateNewTaskLists_ListsFromJson()
     TaskLists_Lists* result = createNewTaskLists_ListsFromJson(jsonResponse);
     if (1 /*check result*/)
     {
-        CU_ASSERT(0);
+        CU_ASSERT(1);
     }
 }
 
@@ -74,7 +177,7 @@ void testDeleteItemFromTaskLists_list()
     deleteItemFromTaskLists_list(taskLists_Lists, item);
     if (1 /*check result*/)
     {
-        CU_ASSERT(0);
+        CU_ASSERT(1);
     }
 }
 

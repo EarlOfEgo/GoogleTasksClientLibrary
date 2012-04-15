@@ -277,7 +277,7 @@ char *readClientId()
 
     char str[200];
 
-    fd = fopen("/home/stephan/Dropbox/Projects/client_id", "r");
+    FILE *fd = fopen("/home/stephan/Dropbox/Projects/client_id", "r");
     if (fd == NULL) return NULL;
     while (fgets(str, sizeof (str), fd) != NULL)
     {
@@ -301,7 +301,7 @@ char *readClientSecret()
 {
     char str[200];
 
-    fd = fopen("/home/stephan/Dropbox/Projects/client_secret", "r");
+    FILE *fd = fopen("/home/stephan/Dropbox/Projects/client_secret", "r");
     if (fd == NULL) return NULL;
     while (fgets(str, sizeof (str), fd) != NULL)
     {

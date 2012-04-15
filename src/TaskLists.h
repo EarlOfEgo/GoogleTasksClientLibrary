@@ -40,7 +40,7 @@ extern "C" {
 
 typedef struct
 {
-    char *kind;     /*Type of the resource. This is always "tasks#taskList".*/
+    char *kind;     /*Type of the resource. This is always "tasks#taskList".*/ //TODO: Is this realy needed?
     char *id;       /*Task list identifier.*/
     char *etag;     /*ETag of the resource.*/
     char *title;    /*Title of the task list.*/
