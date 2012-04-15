@@ -58,7 +58,7 @@ typedef struct
 }TaskLists_Lists;
 
 
-TaskLists_Lists* createNewTaskLists_ListsFromJson(char *jsonResponse);
+TaskLists_Lists* createNewTaskLists_ListsFromJson(json_value *value);
 TaskListItem* createNewTaskListItem(json_value * value);
 
 void addItemToTaskLists_Lists(TaskLists_Lists *taskLists_Lists, TaskListItem *item);

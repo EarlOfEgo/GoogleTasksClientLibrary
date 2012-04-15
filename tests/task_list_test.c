@@ -126,16 +126,23 @@ void testCreateNewTaskListItem()
     json_settings settings;
     memset(&settings, 0, sizeof (json_settings));
     char error[256];
-
-
     json_value *value = json_parse_ex(&settings, fileContent, error);
+    
+    
     TaskListItem *result = createNewTaskListItem(value);
-    CU_ASSERT_PTR_NOT_NULL(result->etag);
-    CU_ASSERT_PTR_NOT_NULL(result->id);
-    CU_ASSERT_PTR_NOT_NULL(result->kind);
-    CU_ASSERT_PTR_NOT_NULL(result->selfLink);
-    CU_ASSERT_PTR_NOT_NULL(result->title);
-    CU_ASSERT_PTR_NOT_NULL(result->updated);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->etag);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->id);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->kind);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->selfLink);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->title);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->updated);
+    CU_ASSERT_STRING_EQUAL(result->etag, "etag_string");
+    CU_ASSERT_STRING_EQUAL(result->id, "id_string");
+    CU_ASSERT_STRING_EQUAL(result->kind, "tasks#taskList");
+    CU_ASSERT_STRING_EQUAL(result->selfLink, "selfLink_string");
+    CU_ASSERT_STRING_EQUAL(result->updated, "datetime");
+    
 
     free(result);
     json_value_free(value);
@@ -155,19 +162,52 @@ void testCreateNewTaskListItem()
     CU_ASSERT_EQUAL(sizeof (result2->selfLink), sizeof (char *));
     CU_ASSERT_EQUAL(sizeof (result2->title), sizeof (char *));
     CU_ASSERT_EQUAL(sizeof (result2->updated), sizeof (char *));
-
+    
     free(result2);
     json_value_free(value2);
 }
 
 void testCreateNewTaskLists_ListsFromJson()
 {
-    char* jsonResponse;
-    TaskLists_Lists* result = createNewTaskLists_ListsFromJson(jsonResponse);
-    if (1 /*check result*/)
-    {
-        CU_ASSERT(1);
-    }
+    char *jsonFullPath = getFullFileName("taskListLists_valid.json");
+
+    int errorCode = 0;
+    char *fileContent = getFileContent(jsonFullPath, &errorCode);
+    CU_ASSERT_EQUAL_FATAL(errorCode, 0);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fileContent);
+    
+    json_settings settings;
+    memset(&settings, 0, sizeof (json_settings));
+    char error[256];
+    json_value *value = json_parse_ex(&settings, fileContent, error);
+    
+    
+    TaskLists_Lists* result = createNewTaskLists_ListsFromJson(value);
+    CU_ASSERT_PTR_NOT_NULL(result);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->etag);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->kind);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->items);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->nextPageToken);
+    CU_ASSERT_EQUAL(result->numberItems, 1);
+    CU_ASSERT_STRING_EQUAL(result->etag, "etag_string");
+    CU_ASSERT_STRING_EQUAL(result->kind, "tasks#taskLists");
+    CU_ASSERT_STRING_EQUAL(result->nextPageToken, "nextPageToken_string");
+    
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->items[0]);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->items[0].etag);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->items[0].id);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->items[0].kind);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->items[0].selfLink);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->items[0].title);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result->items[0].updated);
+    CU_ASSERT_STRING_EQUAL(result->items[0].etag, "etag_string");
+    CU_ASSERT_STRING_EQUAL(result->items[0].id, "id_string");
+    CU_ASSERT_STRING_EQUAL(result->items[0].kind, "tasks#taskList");
+    CU_ASSERT_STRING_EQUAL(result->items[0].selfLink, "selfLink_string");
+    CU_ASSERT_STRING_EQUAL(result->items[0].updated, "datetime");
+    
+    
 }
 
 void testDeleteItemFromTaskLists_list()

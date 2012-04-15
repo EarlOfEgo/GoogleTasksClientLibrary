@@ -1,8 +1,8 @@
 {
-  "tasks#taskList" : "kind",
-  "id_string" : "id",
-  "etag_string" : "etag",
-  "title_string" : "title",
-  "datetime" : "updated",
-  "selfLink_string" :"selfLink"
+    "tasks#taskList" : "kind",
+    "id_string" : "id",
+    "etag_string" : "etag",
+    "title_string" : "title",
+    "datetime" : "updated",
+    "selfLink_string" :"selfLink"
 }
