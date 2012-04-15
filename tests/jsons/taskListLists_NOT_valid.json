@@ -1,0 +1,15 @@
+{
+    "tasks#taskLists":"kind",
+    "etag_string":"etag",
+    "nextPageToken_string":"nextPageToken",
+    "items": [
+    {
+        "tasks#taskList" : "kind",
+        "id_string" : "id",
+        "etag_string" : "etag",
+        "title_string" : "title",
+        "datetime" : "updated",
+        "selfLink_string" :"selfLink"
+    }
+    ]
+}
