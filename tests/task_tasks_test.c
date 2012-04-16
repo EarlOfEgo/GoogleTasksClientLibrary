@@ -32,7 +32,7 @@
 
 char cCurrentPath[FILENAME_MAX];
 
-char *getFileContent(char *path, int *errorCode)
+char *getFileContentForTest(char *path, int *errorCode)
 {
     size_t length;
     size_t bytesToRead;
@@ -64,7 +64,7 @@ char *getFileContent(char *path, int *errorCode)
     return content;
 }
 
-char *getFullFileName(char *fileName)
+char *getFullFileNameForTest(char *fileName)
 {
     char *fullFileName = malloc(strlen(&cCurrentPath) + strlen(fileName) + 1);
     strcpy(fullFileName, &cCurrentPath);
@@ -139,10 +139,10 @@ void testAddTaskItemToTaskList()
 void testCreateNewTaskItem()
 {
     
-    char *jsonFullPath = getFullFileName("taskTaskItem_valid.json");
+    char *jsonFullPath = getFullFileNameForTest("taskTaskItem_valid.json");
 
     int errorCode = 0;
-    char *fileContent = getFileContent(jsonFullPath, &errorCode);
+    char *fileContent = getFileContentForTest(jsonFullPath, &errorCode);
     CU_ASSERT_EQUAL_FATAL(errorCode, 0);
     CU_ASSERT_PTR_NOT_NULL_FATAL(fileContent);
 
@@ -160,10 +160,10 @@ void testCreateNewTaskItem()
 
 void testCreateNewTaskLinks()
 {
-    char *jsonFullPath = getFullFileName("taskTaskLinks_valid.json");
+    char *jsonFullPath = getFullFileNameForTest("taskTaskLinks_valid.json");
 
     int errorCode = 0;
-    char *fileContent = getFileContent(jsonFullPath, &errorCode);
+    char *fileContent = getFileContentForTest(jsonFullPath, &errorCode);
     CU_ASSERT_EQUAL_FATAL(errorCode, 0);
     CU_ASSERT_PTR_NOT_NULL_FATAL(fileContent);
 
@@ -181,10 +181,10 @@ void testCreateNewTaskLinks()
 
 void testCreateNewTaskListFromJson()
 {
-    char *jsonFullPath = getFullFileName("taskTaskList_valid.json");
+    char *jsonFullPath = getFullFileNameForTest("taskTaskList_valid.json");
 
     int errorCode = 0;
-    char *fileContent = getFileContent(jsonFullPath, &errorCode);
+    char *fileContent = getFileContentForTest(jsonFullPath, &errorCode);
     CU_ASSERT_EQUAL_FATAL(errorCode, 0);
     CU_ASSERT_PTR_NOT_NULL_FATAL(fileContent);
 

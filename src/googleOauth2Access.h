@@ -22,6 +22,16 @@
 #include <curl/curl.h>
 #include <curl/types.h>
 #include <curl/easy.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#ifdef WINDOWS
+#include <direct.h>
+#define GetCurrentDir _getcwd
+#else
+#include <unistd.h>
+#define GetCurrentDir getcwd
+#endif
 
 #include "json.h"
 
@@ -55,6 +65,8 @@ extern "C" {
 
 #define REFRESH_TOKEN_STRING "refresh_token="
     
+#define NO_ERROR "NO_ERROR"
+    
 char *buildAccessTokenRequestAsHtmlRequest();
 char *buildPostFieldsForRequestingAnAccessToken(char *accessTokenCode);
 char *buildPostFieldsForRefreshingTheAccessToken(char *refreshToken);
@@ -62,8 +74,10 @@ char *buildPostFieldsForRefreshingTheAccessToken(char *refreshToken);
 char *makeHttpsRequestWithResponse(char *postfields, char *https_server);
 size_t static httpsCallback(void *ptr, size_t size, size_t nmemb, void *data);
 
-char *readClientId();
-char *readClientSecret();
+
+char *getFileContent(char *path, int *errorCode);
+char *getFullFileName(char *fileName);
+
 
 typedef struct
 {
@@ -74,8 +88,19 @@ typedef struct
     char *error_code;
 }TokenResponse;
 
-TokenResponse *processIncomingAccessTokenResponse(char *response);
-TokenResponse *processIncomingRefreshTokenResponse(char *response, char *refreshToken);
+typedef struct
+{
+    char *client_secret;
+    char *client_id;
+}ClientInformation;
+
+ClientInformation *clientInformation ;
+
+/* HAVE TO BE CALLED FIRST */
+int initClientInformation(char *clientIdFile, char *clientSecretFile);
+
+TokenResponse *processIncomingAccessTokenResponse(json_value *value);
+TokenResponse *processIncomingRefreshTokenResponse(json_value *value, char *refreshToken);
 
 
 

@@ -27,6 +27,7 @@
  */
 char *buildAccessTokenRequestAsHtmlRequest() //TODO: REFACTOR AFTER ALL TESTS SUCCEED.... //TODO: WRITE TESTS!!
 {
+    
     int str_lenght = strlen(AUTH_SERVER) + 1;
     char *ret_value = malloc(str_lenght * sizeof (char));
     strcpy(ret_value, AUTH_SERVER);
@@ -39,7 +40,13 @@ char *buildAccessTokenRequestAsHtmlRequest() //TODO: REFACTOR AFTER ALL TESTS SU
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, CLIENT_ID_STRING);
 
-    char *client_id = readClientId();
+    if(clientInformation->client_id == NULL || clientInformation->client_secret == NULL)
+    {
+        printf("ERROR");
+        return NULL;
+    }
+    
+    char *client_id = clientInformation->client_id;
     str_lenght += strlen(client_id);
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, client_id);
@@ -102,6 +109,7 @@ char *buildAccessTokenRequestAsHtmlRequest() //TODO: REFACTOR AFTER ALL TESTS SU
  */
 char *buildPostFieldsForRequestingAnAccessToken(char *accessTokenCode)//TODO: REFACTOR AFTER ALL TESTS SUCCEED.... //TODO: WRITE TESTS!!
 {
+    
     int str_lenght = strlen(CODE_STRING) + 1;
     char *ret_value = malloc(str_lenght * sizeof (char));
     strcpy(ret_value, CODE_STRING);
@@ -118,7 +126,7 @@ char *buildPostFieldsForRequestingAnAccessToken(char *accessTokenCode)//TODO: RE
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, CLIENT_ID_STRING);
 
-    char *client_id = readClientId();
+    char *client_id = clientInformation->client_id;
     str_lenght += strlen(client_id);
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, client_id);
@@ -131,7 +139,7 @@ char *buildPostFieldsForRequestingAnAccessToken(char *accessTokenCode)//TODO: RE
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, CLIENT_SECRET_STRING);
 
-    char *client_secret = readClientSecret();
+    char *client_secret = clientInformation->client_secret;
     str_lenght += strlen(client_secret);
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, client_secret);
@@ -186,11 +194,11 @@ char *buildPostFieldsForRefreshingTheAccessToken(char *refreshToken)//TODO: REFA
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, CLIENT_ID_STRING);
 
-    char *client_id = readClientId();
+    char *client_id = clientInformation->client_id;
     str_lenght += strlen(client_id);
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, client_id);
-
+    
     str_lenght += strlen(AND);
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, AND);
@@ -199,7 +207,7 @@ char *buildPostFieldsForRefreshingTheAccessToken(char *refreshToken)//TODO: REFA
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, CLIENT_SECRET_STRING);
 
-    char *client_secret = readClientSecret();
+    char *client_secret = clientInformation->client_secret;
     str_lenght += strlen(client_secret);
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, client_secret);
@@ -268,70 +276,24 @@ size_t static httpsCallback(void *ptr, size_t size, size_t nmemb, void *data)
     *res_ptr = strndup(ptr, (size_t) (size * nmemb));
 }
 
-/**
- * Reads the client id, at the moment it is stored in a file on my machine :-)
- * @return client id
- */
-char *readClientId()
-{
 
-    char str[200];
 
-    FILE *fd = fopen("/home/stephan/Dropbox/Projects/client_id", "r");
-    if (fd == NULL) return NULL;
-    while (fgets(str, sizeof (str), fd) != NULL)
-    {
-        int len = strlen(str) - 1;
-        if (str[len] == '\n')
-            str[len] = 0;
-
-    }
-    fclose(fd);
-    char *ret_val = malloc(strlen(str) * sizeof (char));
-    strcpy(ret_val, str);
-
-    return ret_val;
-}
-
-/**
- * Reads the client secret, at the moment it is stored in a file on my machine :-)
- * @return client secret
- */
-char *readClientSecret()
-{
-    char str[200];
-
-    FILE *fd = fopen("/home/stephan/Dropbox/Projects/client_secret", "r");
-    if (fd == NULL) return NULL;
-    while (fgets(str, sizeof (str), fd) != NULL)
-    {
-        int len = strlen(str) - 1;
-        if (str[len] == '\n')
-            str[len] = 0;
-
-    }
-    fclose(fd);
-    char *ret_val = malloc(strlen(str) * sizeof (char));
-    strcpy(ret_val, str);
-
-    return ret_val;
-}
 
 /**
  * Processes the incoming response from the request of an access token
  * @param response
  * @return TokenResponse struct
  */
-TokenResponse *processIncomingAccessTokenResponse(char *response)
+TokenResponse *processIncomingAccessTokenResponse(json_value *value)
 {
-    json_value *value = json_parse(response);
     TokenResponse *tokenResponse = malloc(sizeof (TokenResponse));
-
+    tokenResponse->error_code = malloc( strlen(NO_ERROR) +1);
+    strcpy(tokenResponse->error_code, NO_ERROR);
     if (value != NULL)
     {
         if (value->u.object.length == 1 && strcmp(value->u.object.values[0].name, "error") == 0)
         {
-            tokenResponse->error_code = malloc(value->u.object.values[0].value->u.string.length + 1);
+            tokenResponse->error_code = realloc(tokenResponse->error_code, value->u.object.values[0].value->u.string.length + 1);
             strcpy(tokenResponse->error_code, value->u.object.values[0].value->u.string.ptr);
             printf("%s\n", value->u.object.values[0].value->u.string.ptr);
             json_value_free(value);
@@ -362,7 +324,6 @@ TokenResponse *processIncomingAccessTokenResponse(char *response)
             }
 
         }
-        json_value_free(value);
     }
     return tokenResponse;
 }
@@ -374,13 +335,16 @@ TokenResponse *processIncomingAccessTokenResponse(char *response)
  * @param refreshToken
  * @return TokenResponse struct
  */
-TokenResponse *processIncomingRefreshTokenResponse(char *response, char *refreshToken)
+TokenResponse *processIncomingRefreshTokenResponse(json_value *value, char *refreshToken)
 {
-    json_value *value = json_parse(response);
     TokenResponse *tokenResponse = malloc(sizeof (TokenResponse));
+    
     tokenResponse->refresh_token = malloc(strlen(refreshToken) + 1);
     strcpy(tokenResponse->refresh_token, refreshToken);
 
+    tokenResponse->error_code = malloc( strlen(NO_ERROR) +1);
+    strcpy(tokenResponse->error_code, NO_ERROR);
+    
     if (value != NULL)
     {
         if (value->u.object.length == 1 && strcmp(value->u.object.values[0].name, "error") == 0)
@@ -412,7 +376,75 @@ TokenResponse *processIncomingRefreshTokenResponse(char *response, char *refresh
             }
 
         }
-        json_value_free(value);
     }
     return tokenResponse;
+}
+
+char *getFullFileName(char *fileName)
+{
+    char cCurrentPath[FILENAME_MAX];
+    if (!GetCurrentDir(cCurrentPath, sizeof (cCurrentPath) / sizeof (char)))
+    {
+        return NULL;
+    }
+    strcat(cCurrentPath, "/");
+    char *fullFileName = malloc(strlen(&cCurrentPath) + strlen(fileName) + 1);
+    strcpy(fullFileName, &cCurrentPath);
+    strcat(fullFileName, fileName);
+    return fullFileName;
+}
+
+char *getFileContent(char *path, int *errorCode)
+{
+    size_t length;
+    size_t bytesToRead;
+    char* content;
+    FILE* f;
+
+    f = fopen(path, "rb");
+    if (f == NULL)
+    {
+        *errorCode = 1;
+        return NULL;
+    }
+
+    fseek(f, 0, SEEK_END);
+    length = ftell(f);
+    rewind(f);
+
+
+    content = malloc(sizeof (char) * length);
+    if (content == NULL)
+    {
+        *errorCode = 2;
+        return NULL;
+    }
+
+    bytesToRead = fread(content, sizeof (char), length, f);
+    fclose(f);
+
+    if(content[length-1] == '\n')
+    {
+         content[length-1] = '\0';
+    }
+    return content;
+}
+
+int initClientInformation(char *clientIdFile, char *clientSecretFile)
+{
+    int errorCode = 0;
+    clientInformation = malloc(sizeof (ClientInformation));
+    char *client_id = getFileContent(getFullFileName(clientIdFile), &errorCode);
+    if(errorCode != 0)
+        return errorCode;
+    char *client_secret = getFileContent(getFullFileName(clientSecretFile), &errorCode);
+    if(errorCode != 0)
+        return errorCode;
+    clientInformation->client_id = malloc(strlen(client_id) +1);
+    strcpy(clientInformation->client_id, client_id);
+    
+    clientInformation->client_secret = malloc(strlen(client_secret) +1);
+    strcpy(clientInformation->client_secret, client_secret);
+    
+    return errorCode;
 }
