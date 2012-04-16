@@ -9,7 +9,7 @@ To execute the tests type:
     ~$make test
 At the moment there are two dummy files: "client.id.for.git" and "client.secret.for.git".
 They being used for testing the google oauth2 methods(with Cunit), for testing with real client id/secret write a small main:
-
+src/main.c
 ```c
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,7 +32,8 @@ int main(int argc, char** argv)
 
 And run: 
     ~$make
-The executables can be found at:    build/Debug/GNU-Linux-x86/tests/TestFiles
+The executables can be found at:    
+    build/Debug/YOUR_SYSTEM/tests/TestFiles/
 ###Requirements
 Until now, just libcurl and cunit for the unit tests
 
