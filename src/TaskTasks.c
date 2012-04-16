@@ -1,20 +1,20 @@
 /*
-* Copyright (c) 2012 Stephan Hagios <stephan.hagios@gmail.com>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Library General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/
+ * Copyright (c) 2012 Stephan Hagios <stephan.hagios@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 #include "TaskTasks.h"
 #include "TaskLists.h"
@@ -106,7 +106,7 @@ void addTaskItemToTaskList(TaskList *list, TaskItem *item)
     void *tmp;
     if (list->numberItems != 0)
     {
-        tmp = realloc(list->items, ((list->numberItems + 1) * sizeof (TaskList)));
+        tmp = realloc(list->items, ((list->numberItems + 1) * sizeof (TaskItem)));
         if (!tmp)
         {
             printf("ERROR, reallocating");
@@ -114,7 +114,7 @@ void addTaskItemToTaskList(TaskList *list, TaskItem *item)
         }
     } else
     {
-        tmp = malloc(sizeof (TaskList));
+        tmp = malloc(sizeof (TaskItem));
         if (!tmp)
         {
             printf("ERROR, allocating");
@@ -156,11 +156,8 @@ void deleteTaskItemFromTaskList(TaskList *list, char *id)
     list->numberItems = newList->numberItems;
 }
 
-TaskList* createNewTaskListFromJson(char *json)
+TaskList* createNewTaskList(json_value *value)
 {
-
-    json_value *value = json_parse(json);
-
     if (value != NULL)
     {
         TaskList* newTaskList = malloc(sizeof (TaskList));
@@ -182,7 +179,6 @@ TaskList* createNewTaskListFromJson(char *json)
                 for (j = 0; j < value->u.object.values[i].value->u.array.length; j++)
                     addTaskItemToTaskList(newTaskList, createNewTaskItem(value->u.object.values[i].value->u.array.values[j]));
         }
-        json_value_free(value);
         return newTaskList;
     }
 
@@ -254,12 +250,31 @@ TaskItem *createNewTaskItem(json_value *value)
                     strcpy(newItem->completed, value->u.object.values[i].value->u.string.ptr);
                 } else if (strcmp(value->u.object.values[i].name, DELETED_STRING) == 0)
                 {
-                    newItem->deleted = malloc(value->u.object.values[i].value->u.string.length + 1);
-                    strcpy(newItem->deleted, value->u.object.values[i].value->u.string.ptr);
+                    if (value->u.object.values[i].value->type == json_boolean)
+                    {
+                        newItem->deleted = value->u.object.values[i].value->u.boolean;
+                    } 
+/*
+                    else
+                    {
+                        newItem->deleted = malloc(value->u.object.values[i].value->u.string.length + 1);
+                        strcpy(newItem->deleted, value->u.object.values[i].value->u.string.ptr);
+                    }
+*/
+
                 } else if (strcmp(value->u.object.values[i].name, HIDDEN_STRING) == 0)
                 {
-                    newItem->hidden = malloc(value->u.object.values[i].value->u.string.length + 1);
-                    strcpy(newItem->hidden, value->u.object.values[i].value->u.string.ptr);
+                    if (value->u.object.values[i].value->type == json_boolean)
+                    {
+                        newItem->hidden = value->u.object.values[i].value->u.boolean;
+                    } 
+/*
+                    else
+                    {
+                        newItem->hidden = malloc(value->u.object.values[i].value->u.string.length + 1);
+                        strcpy(newItem->hidden, value->u.object.values[i].value->u.string.ptr);
+                    }
+*/
                 }
             } else
                 for (j = 0; j < value->u.object.values[i].value->u.array.length; j++)

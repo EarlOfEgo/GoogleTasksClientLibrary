@@ -31,6 +31,7 @@
 #include "CUnit/Basic.h"
 #include "src/TaskLists.h"
 
+
 char cCurrentPath[FILENAME_MAX];
 
 char *getFileContent(char *path, int *errorCode)

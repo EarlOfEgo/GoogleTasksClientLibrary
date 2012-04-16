@@ -1,0 +1,30 @@
+{
+    "kind": "tasks#tasks",
+    "etag": "etag_string",
+    "nextPageToken": "nextPageToken_string",
+    "items": [
+    {
+        "kind": "tasks#task",
+        "id": "id_string",
+        "etag": "etag_string",
+        "title": "title_string",
+        "updated": "datetime",
+        "selfLink": "selfLink_string",
+        "parent": "parent_string",
+        "position": "position_sring",
+        "notes": "notes_string",
+        "status": "status_string",
+        "due": "due_datetime",
+        "completed": "completed_datetime",
+        "deleted": true,
+        "hidden": false,
+        "links": [
+        {
+            "type": "link_type_string",
+            "description": "link_description_sring",
+            "link": "link_link_string"
+        }
+        ]
+    }
+    ]
+}

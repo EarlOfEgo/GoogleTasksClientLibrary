@@ -59,8 +59,8 @@ typedef struct
     char *status;       /*Status of the task. This is either "needsAction" or "completed".*/
     char *due;          /*Due date of the task (as a RFC 3339 timestamp). Optional.*/
     char *completed;    /*Completion date of the task (as a RFC 3339 timestamp). This field is omitted if the task has not been completed.*/
-    char *deleted;      /*Flag indicating whether the task has been deleted. The default if False.*/
-    char *hidden;       /*Flag indicating whether the task is hidden. This is the case if the task had been marked completed when the task list was last cleared. The default is False. This field is read-only.*/
+    int deleted;      /*Flag indicating whether the task has been deleted. The default if False.*/
+    int hidden;       /*Flag indicating whether the task is hidden. This is the case if the task had been marked completed when the task list was last cleared. The default is False. This field is read-only.*/
     int numberLinks;    /*Number of links*/
     TaskLink *links;    /*Collection of links. This collection is read-only.*/
     
@@ -77,7 +77,7 @@ typedef struct
 
 TaskLink* createNewTaskLinks(json_value *value);
 
-TaskList* createNewTaskListFromJson(char *json);
+TaskList* createNewTaskList(json_value *value);
 
 void addLinkToTaskItem(TaskItem *item, TaskLink *link);
 void deleteLinkFromTaskItem(TaskItem *item, char *description);
