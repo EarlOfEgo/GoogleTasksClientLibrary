@@ -66,6 +66,12 @@ extern "C" {
 #define REFRESH_TOKEN_STRING "refresh_token="
     
 #define NO_ERROR "NO_ERROR"
+#define ERROR "error"
+#define INVALID_GRAND_STRING "invalid_grant"
+    
+/* GOOGLE RESPONSE ERROR CODES */
+#define INVALID_GRAND 20
+   
     
 char *buildAccessTokenRequestAsHtmlRequest();
 char *buildPostFieldsForRequestingAnAccessToken(char *accessTokenCode);
@@ -103,7 +109,7 @@ TokenResponse *processIncomingAccessTokenResponse(json_value *value);
 TokenResponse *processIncomingRefreshTokenResponse(json_value *value, char *refreshToken);
 
 
-
+int checkIfErrorOccured(json_value *value);
 
 
 #ifdef	__cplusplus

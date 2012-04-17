@@ -1,20 +1,20 @@
 /*
-* Copyright (c) 2012 Stephan Hagios <stephan.hagios@gmail.com>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-* GNU Library General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/
+ * Copyright (c) 2012 Stephan Hagios <stephan.hagios@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
 
 #include <string.h>
 #include <stdlib.h>
@@ -27,7 +27,7 @@
  */
 char *buildAccessTokenRequestAsHtmlRequest() //TODO: REFACTOR AFTER ALL TESTS SUCCEED.... //TODO: WRITE TESTS!!
 {
-    
+
     int str_lenght = strlen(AUTH_SERVER) + 1;
     char *ret_value = malloc(str_lenght * sizeof (char));
     strcpy(ret_value, AUTH_SERVER);
@@ -40,12 +40,12 @@ char *buildAccessTokenRequestAsHtmlRequest() //TODO: REFACTOR AFTER ALL TESTS SU
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, CLIENT_ID_STRING);
 
-    if(clientInformation->client_id == NULL || clientInformation->client_secret == NULL)
+    if (clientInformation->client_id == NULL || clientInformation->client_secret == NULL)
     {
         printf("ERROR");
         return NULL;
     }
-    
+
     char *client_id = clientInformation->client_id;
     str_lenght += strlen(client_id);
     ret_value = realloc(ret_value, str_lenght);
@@ -109,7 +109,7 @@ char *buildAccessTokenRequestAsHtmlRequest() //TODO: REFACTOR AFTER ALL TESTS SU
  */
 char *buildPostFieldsForRequestingAnAccessToken(char *accessTokenCode)//TODO: REFACTOR AFTER ALL TESTS SUCCEED.... //TODO: WRITE TESTS!!
 {
-    
+
     int str_lenght = strlen(CODE_STRING) + 1;
     char *ret_value = malloc(str_lenght * sizeof (char));
     strcpy(ret_value, CODE_STRING);
@@ -198,7 +198,7 @@ char *buildPostFieldsForRefreshingTheAccessToken(char *refreshToken)//TODO: REFA
     str_lenght += strlen(client_id);
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, client_id);
-    
+
     str_lenght += strlen(AND);
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, AND);
@@ -223,7 +223,7 @@ char *buildPostFieldsForRefreshingTheAccessToken(char *refreshToken)//TODO: REFA
     str_lenght += strlen(REFRESH_TOKEN);
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, REFRESH_TOKEN);
-    
+
     return ret_value;
 }
 
@@ -276,9 +276,6 @@ size_t static httpsCallback(void *ptr, size_t size, size_t nmemb, void *data)
     *res_ptr = strndup(ptr, (size_t) (size * nmemb));
 }
 
-
-
-
 /**
  * Processes the incoming response from the request of an access token
  * @param response
@@ -287,7 +284,7 @@ size_t static httpsCallback(void *ptr, size_t size, size_t nmemb, void *data)
 TokenResponse *processIncomingAccessTokenResponse(json_value *value)
 {
     TokenResponse *tokenResponse = malloc(sizeof (TokenResponse));
-    tokenResponse->error_code = malloc( strlen(NO_ERROR) +1);
+    tokenResponse->error_code = malloc(strlen(NO_ERROR) + 1);
     strcpy(tokenResponse->error_code, NO_ERROR);
     if (value != NULL)
     {
@@ -328,7 +325,6 @@ TokenResponse *processIncomingAccessTokenResponse(json_value *value)
     return tokenResponse;
 }
 
-
 /**
  * Processes the incoming response from the request of the refresh of an access token
  * @param response
@@ -338,13 +334,13 @@ TokenResponse *processIncomingAccessTokenResponse(json_value *value)
 TokenResponse *processIncomingRefreshTokenResponse(json_value *value, char *refreshToken)
 {
     TokenResponse *tokenResponse = malloc(sizeof (TokenResponse));
-    
+
     tokenResponse->refresh_token = malloc(strlen(refreshToken) + 1);
     strcpy(tokenResponse->refresh_token, refreshToken);
 
-    tokenResponse->error_code = malloc( strlen(NO_ERROR) +1);
+    tokenResponse->error_code = malloc(strlen(NO_ERROR) + 1);
     strcpy(tokenResponse->error_code, NO_ERROR);
-    
+
     if (value != NULL)
     {
         if (value->u.object.length == 1 && strcmp(value->u.object.values[0].name, "error") == 0)
@@ -413,19 +409,21 @@ char *getFileContent(char *path, int *errorCode)
     rewind(f);
 
 
-    content = malloc(sizeof (char) * length);
+    content = malloc(sizeof (char) * length +1);
     if (content == NULL)
     {
         *errorCode = 2;
         return NULL;
     }
-
+ 
+    memset(content, '\0', length+1);
     bytesToRead = fread(content, sizeof (char), length, f);
+
     fclose(f);
 
-    if(content[length-1] == '\n')
+    if (content[length - 1] == '\n')
     {
-         content[length-1] = '\0';
+        content[length - 1] = '\0';
     }
     return content;
 }
@@ -435,16 +433,41 @@ int initClientInformation(char *clientIdFile, char *clientSecretFile)
     int errorCode = 0;
     clientInformation = malloc(sizeof (ClientInformation));
     char *client_id = getFileContent(getFullFileName(clientIdFile), &errorCode);
-    if(errorCode != 0)
+    if (errorCode != 0)
         return errorCode;
     char *client_secret = getFileContent(getFullFileName(clientSecretFile), &errorCode);
-    if(errorCode != 0)
+    if (errorCode != 0)
         return errorCode;
-    clientInformation->client_id = malloc(strlen(client_id) +1);
+    clientInformation->client_id = malloc(strlen(client_id) + 1);
     strcpy(clientInformation->client_id, client_id);
-    
-    clientInformation->client_secret = malloc(strlen(client_secret) +1);
+
+    clientInformation->client_secret = malloc(strlen(client_secret) + 1);
     strcpy(clientInformation->client_secret, client_secret);
-    
+
     return errorCode;
+}
+
+/**
+ * Checks if google sends an error and returns an integer with the responding error code.
+ * @param value
+ * @return 
+ */
+int checkIfErrorOccured(json_value *value)
+{
+    int returnValue = 0, i;
+    if (value != NULL)
+    {
+        for (i = 0; i < value->u.object.length; i++)
+        {
+            if (strcmp(value->u.object.values[i].name, ERROR) == 0)
+            {
+                if (strcmp(value->u.object.values[i].value->u.string.ptr, INVALID_GRAND_STRING) == 0)
+                {
+                    returnValue = INVALID_GRAND;
+                }
+            }
+        }
+    }
+
+    return returnValue;
 }

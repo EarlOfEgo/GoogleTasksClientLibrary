@@ -103,6 +103,7 @@ void testProcessIncomingAccessTokenResponse()
     CU_ASSERT_STRING_EQUAL(result->token_type, "Bearer");
     CU_ASSERT_EQUAL(result->expires_in, 3920);
     
+    json_value_free(value);   
 
 }
 
@@ -126,7 +127,33 @@ void testProcessIncomingRefreshTokenResponse()
     CU_ASSERT_STRING_EQUAL(result->refresh_token, refreshToken);
     CU_ASSERT_STRING_EQUAL(result->token_type, "Bearer");
     CU_ASSERT_EQUAL(result->expires_in, 3920);
+    
+    json_value_free(value); 
 
+}
+
+void testcheckIfErrorOccured()
+{
+
+    int errorCode = 0;
+    char *jsonFullPath = getFullFileName("tests/jsons/googleOauth2Access_invalidGrand.json");
+    char *fileContent = getFileContent(jsonFullPath, &errorCode);
+    CU_ASSERT_EQUAL_FATAL(errorCode, 0);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(fileContent);
+
+    json_settings settings;
+    memset(&settings, 0, sizeof (json_settings));
+    char error[256];
+
+    json_value *value = json_parse_ex(&settings, fileContent, error);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(value);
+    
+    int return_value = checkIfErrorOccured(value);
+    CU_ASSERT_NOT_EQUAL(return_value, 0);
+    CU_ASSERT_EQUAL(return_value, INVALID_GRAND);
+
+    json_value_free(value); 
+    
 }
 
 int main()
@@ -151,7 +178,8 @@ int main()
             (NULL == CU_add_test(pSuite, "testBuildPostFieldsForRequestingAnAccessToken", testBuildPostFieldsForRequestingAnAccessToken)) ||
             (NULL == CU_add_test(pSuite, "testMakeHttpsRequestWithResponse", testMakeHttpsRequestWithResponse)) ||
             (NULL == CU_add_test(pSuite, "testProcessIncomingAccessTokenResponse", testProcessIncomingAccessTokenResponse)) ||
-            (NULL == CU_add_test(pSuite, "testProcessIncomingRefreshTokenResponse", testProcessIncomingRefreshTokenResponse)))
+            (NULL == CU_add_test(pSuite, "testProcessIncomingRefreshTokenResponse", testProcessIncomingRefreshTokenResponse)) ||
+            (NULL == CU_add_test(pSuite, "testcheckIfErrorOccured", testcheckIfErrorOccured)))
     {
         CU_cleanup_registry();
         return CU_get_error();
