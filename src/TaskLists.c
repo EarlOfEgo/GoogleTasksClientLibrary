@@ -142,7 +142,12 @@ TaskListItem* createNewTaskListItem(json_value * value)
     return NULL;
 }
 
-char *taskLists_List(char *access_token, int maxResults /*default = -1*/, char *pageToken)
+/**
+ * Makes this request: GET https://www.googleapis.com/tasks/v1/users/@me/lists
+ * @param value
+ * @return 
+ */
+char *taskLists_List(char *access_token, int maxResults /*default = -1*/, char *pageToken, char *fields)
 {
     if (access_token != NULL)
     {
@@ -176,16 +181,55 @@ char *taskLists_List(char *access_token, int maxResults /*default = -1*/, char *
         }
 
         char *response = NULL;
+        str_lenght = strlen(LISTS_HTTP_REQUEST) + 1;
+        char *listsHttpRequest = malloc(str_lenght * sizeof (char));
+        strcpy(listsHttpRequest, LISTS_HTTP_REQUEST);
 
-        curl_easy_setopt(curl, CURLOPT_URL, LISTS_HTTP_REQUEST);
+        if (maxResults != -1)
+        {
+            
+            str_lenght += strlen(MAX_RESULTS_STRING);
+            listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+            strcat(listsHttpRequest, MAX_RESULTS_STRING);
+            char buffer [33];
+            
+            str_lenght += sprintf(buffer, "%d", maxResults) +1;
+            listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+            strcat(listsHttpRequest, buffer);
+            strcat(listsHttpRequest, "&");
+             
+        }
+        
+        if(pageToken != NULL)
+        {
+            str_lenght += strlen(PAGE_TOKEN_STRING);
+            listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+            strcat(listsHttpRequest, PAGE_TOKEN_STRING);
+            
+            str_lenght += strlen(pageToken) +1;
+            listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+            strcat(listsHttpRequest, pageToken);
+            strcat(listsHttpRequest, "&");
+        }
+        
+        if(fields != NULL)
+        {
+            str_lenght += strlen(FIELDS_STRING);
+            listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+            strcat(listsHttpRequest, FIELDS_STRING);
+            
+            str_lenght += strlen(fields) +1;
+            listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+            strcat(listsHttpRequest, fields);
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, listsHttpRequest);
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, httpsCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) &chunk);
-
-
 
         curl_easy_perform(curl);
         curl_easy_cleanup(curl);
