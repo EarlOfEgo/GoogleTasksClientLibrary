@@ -450,7 +450,7 @@ int initClientInformation(char *clientIdFile, char *clientSecretFile)
 /**
  * Checks if google sends an error and returns an integer with the responding error code.
  * @param value
- * @return 
+ * @return the error code as an integer
  */
 int checkIfErrorOccured(json_value *value)
 {

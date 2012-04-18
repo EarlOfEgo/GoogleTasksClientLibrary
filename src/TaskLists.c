@@ -141,3 +141,85 @@ TaskListItem* createNewTaskListItem(json_value * value)
     }
     return NULL;
 }
+
+char *taskLists_List(char *access_token, int maxResults /*default = -1*/, char *pageToken)
+{
+    if (access_token != NULL)
+    {
+        struct MemoryStruct chunk;
+
+        chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
+        chunk.size = 0; /* no data at this point */
+
+        CURL *curl;
+        struct curl_slist *headers = NULL;
+
+        int str_lenght = strlen(HEADER_AUTHORIZATION) + 1;
+        char *header = malloc(str_lenght * sizeof (char));
+        strcpy(header, HEADER_AUTHORIZATION);
+
+
+        str_lenght += strlen(access_token);
+        header = realloc(header, str_lenght);
+        strcat(header, access_token);
+
+
+        headers = curl_slist_append(headers, header);
+        if (headers != NULL) printf("\n%s\n", headers->data);
+
+        curl = curl_easy_init();
+
+        if (!curl)
+        {
+            printf("ERROR");
+            return NULL;
+        }
+
+        char *response = NULL;
+
+        curl_easy_setopt(curl, CURLOPT_URL, LISTS_HTTP_REQUEST);
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, httpsCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) &chunk);
+
+
+
+        curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+
+        return chunk.memory;
+    }
+    return NULL;
+}
+
+/**
+ * If server sends a response.
+ * @param ptr
+ * @param size
+ * @param nmemb
+ * @param data
+ * @return 
+ */
+size_t static httpsCallback(void *ptr, size_t size, size_t nmemb, void *data)
+{
+
+    size_t realsize = size * nmemb;
+    struct MemoryStruct *mem = (struct MemoryStruct *) data;
+
+    mem->memory = realloc(mem->memory, mem->size + realsize + 1);
+    if (mem->memory == NULL)
+    {
+        /* out of memory! */
+        printf("not enough memory (realloc returned NULL)\n");
+        exit(EXIT_FAILURE);
+    }
+
+    memcpy(&(mem->memory[mem->size]), ptr, realsize);
+    mem->size += realsize;
+    mem->memory[mem->size] = 0;
+
+    return realsize;
+}

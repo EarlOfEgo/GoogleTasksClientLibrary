@@ -21,8 +21,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <curl/curl.h>
+#include <curl/types.h>
+#include <curl/easy.h>
+
 
 #include "json.h"
+#include "googleOauth2Access.h"
 
 #ifdef	__cplusplus
 extern "C" {
@@ -55,7 +60,14 @@ typedef struct
     char *nextPageToken;        /*Token that can be used to request the next page of this result.*/
     int numberItems;
     TaskListItem *items;   /*Collection of task lists.*/
+    
 }TaskLists_Lists;
+
+
+struct MemoryStruct {
+  char *memory;
+  size_t size;
+};
 
 
 TaskLists_Lists* createNewTaskLists_ListsFromJson(json_value *value);
@@ -63,6 +75,16 @@ TaskListItem* createNewTaskListItem(json_value * value);
 
 void addItemToTaskLists_Lists(TaskLists_Lists *taskLists_Lists, TaskListItem *item);
 void deleteItemFromTaskLists_list(TaskLists_Lists *taskLists_Lists, char *item);
+
+/* HTTP REQUESTS */
+#define LISTS_HTTP_REQUEST "https://www.googleapis.com/tasks/v1/users/@me/lists"
+char *taskLists_List(char *access_token, int maxResults, char *pageToken);
+
+#define HEADER_AUTHORIZATION "Authorization:  Bearer "
+
+size_t static httpsCallback(void *ptr, size_t size, size_t nmemb, void *data);
+
+
 
 
 

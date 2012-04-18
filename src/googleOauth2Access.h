@@ -64,6 +64,7 @@ extern "C" {
 #define REFRESH_TOKEN "refresh_token"
 
 #define REFRESH_TOKEN_STRING "refresh_token="
+#define ACCESS_TOKEN_STRING "access_token="
     
 #define NO_ERROR "NO_ERROR"
 #define ERROR "error"
