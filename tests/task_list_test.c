@@ -240,6 +240,33 @@ void testDeleteItemFromTaskLists_list()
     }
 }
 
+void testBuildPostFields()
+{
+    TaskListItem *item = malloc(sizeof (TaskListItem));
+    item->title = "title_string";
+    item->etag = "etag_string";
+    item->id = "id_string";
+    item->kind = "kind_string";
+    item->selfLink = "selfLink_string";
+    item->updated = "updated_string";
+
+    char *result = buildPostFields(item);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "{\"title\":\"title_string\",\"id\":\"id_string\",\"updated\":\"updated_string\",\"selfLink\":\"selfLink_string\",\"etag\":\"etag_string\",\"kind\":\"kind_string\"}");
+
+    item->etag = NULL;
+    item->selfLink = NULL;
+    item->updated = NULL;
+    result = buildPostFields(item);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "{\"title\":\"title_string\",\"id\":\"id_string\",\"kind\":\"kind_string\"}");
+    
+    result = buildPostFields(NULL);
+    CU_ASSERT_PTR_NOT_NULL_FATAL(result);
+    CU_ASSERT_STRING_EQUAL(result, "{}");
+
+}
+
 int main()
 {
     CU_pSuite pSuite = NULL;
@@ -260,7 +287,8 @@ int main()
     if ((NULL == CU_add_test(pSuite, "testAddItemToTaskLists_Lists", testAddItemToTaskLists_Lists)) ||
             (NULL == CU_add_test(pSuite, "testCreateNewTaskListItem", testCreateNewTaskListItem)) ||
             (NULL == CU_add_test(pSuite, "testCreateNewTaskLists_ListsFromJson", testCreateNewTaskLists_ListsFromJson)) ||
-            (NULL == CU_add_test(pSuite, "testDeleteItemFromTaskLists_list", testDeleteItemFromTaskLists_list)))
+            (NULL == CU_add_test(pSuite, "testDeleteItemFromTaskLists_list", testDeleteItemFromTaskLists_list)) ||
+            (NULL == CU_add_test(pSuite, "testBuildPostFields", testBuildPostFields)))
     {
         CU_cleanup_registry();
         return CU_get_error();

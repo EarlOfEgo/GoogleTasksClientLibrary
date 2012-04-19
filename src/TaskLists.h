@@ -77,8 +77,12 @@ void addItemToTaskLists_Lists(TaskLists_Lists *taskLists_Lists, TaskListItem *it
 void deleteItemFromTaskLists_list(TaskLists_Lists *taskLists_Lists, char *item);
 
 /* HTTP REQUESTS */
-#define LISTS_HTTP_REQUEST "https://www.googleapis.com/tasks/v1/users/@me/lists?"
+#define LISTS_HTTP_REQUEST "https://www.googleapis.com/tasks/v1/users/@me/lists"
 char *taskLists_List(char *access_token, int maxResults, char *pageToken, char *fields);
+char *taskLists_Get(char *access_token, char *taskListsId, char *fields);
+char *taskLists_Insert(TaskListItem *item);
+
+char *buildPostFields(TaskListItem *item);
 
 #define HEADER_AUTHORIZATION "Authorization:  Bearer "
 
@@ -87,7 +91,6 @@ char *taskLists_List(char *access_token, int maxResults, char *pageToken, char *
 #define FIELDS_STRING "fields="
 
 size_t static httpsCallback(void *ptr, size_t size, size_t nmemb, void *data);
-
 
 
 

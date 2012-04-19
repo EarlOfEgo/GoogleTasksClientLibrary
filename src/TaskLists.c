@@ -17,6 +17,7 @@
  */
 
 #include "TaskLists.h"
+#include "helpers.h"
 
 void addItemToTaskLists_Lists(TaskLists_Lists *taskLists_Lists, TaskListItem *item)
 {
@@ -181,44 +182,120 @@ char *taskLists_List(char *access_token, int maxResults /*default = -1*/, char *
         }
 
         char *response = NULL;
-        str_lenght = strlen(LISTS_HTTP_REQUEST) + 1;
+        str_lenght = strlen(LISTS_HTTP_REQUEST) + 2;
         char *listsHttpRequest = malloc(str_lenght * sizeof (char));
         strcpy(listsHttpRequest, LISTS_HTTP_REQUEST);
+        strcat(listsHttpRequest, "?");
 
         if (maxResults != -1)
         {
-            
+
             str_lenght += strlen(MAX_RESULTS_STRING);
             listsHttpRequest = realloc(listsHttpRequest, str_lenght);
             strcat(listsHttpRequest, MAX_RESULTS_STRING);
             char buffer [33];
-            
-            str_lenght += sprintf(buffer, "%d", maxResults) +1;
+
+            str_lenght += sprintf(buffer, "%d", maxResults) + 1;
             listsHttpRequest = realloc(listsHttpRequest, str_lenght);
             strcat(listsHttpRequest, buffer);
             strcat(listsHttpRequest, "&");
-             
+
         }
-        
-        if(pageToken != NULL)
+
+        if (pageToken != NULL)
         {
             str_lenght += strlen(PAGE_TOKEN_STRING);
             listsHttpRequest = realloc(listsHttpRequest, str_lenght);
             strcat(listsHttpRequest, PAGE_TOKEN_STRING);
-            
-            str_lenght += strlen(pageToken) +1;
+
+            str_lenght += strlen(pageToken) + 1;
             listsHttpRequest = realloc(listsHttpRequest, str_lenght);
             strcat(listsHttpRequest, pageToken);
             strcat(listsHttpRequest, "&");
         }
-        
-        if(fields != NULL)
+
+        if (fields != NULL)
         {
             str_lenght += strlen(FIELDS_STRING);
             listsHttpRequest = realloc(listsHttpRequest, str_lenght);
             strcat(listsHttpRequest, FIELDS_STRING);
-            
-            str_lenght += strlen(fields) +1;
+
+            str_lenght += strlen(fields) + 1;
+            listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+            strcat(listsHttpRequest, fields);
+        }
+
+        curl_easy_setopt(curl, CURLOPT_URL, listsHttpRequest);
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, httpsCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) &chunk);
+
+        curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+
+        return chunk.memory;
+    }
+    return NULL;
+}
+
+/**
+ * Makes this request: GET https://www.googleapis.com/tasks/v1/users/@me/lists/taskListsId
+ * @param value
+ * @return 
+ */
+char *taskLists_Get(char *access_token, char *taskListsId, char *fields)
+{
+    if (access_token != NULL)
+    {
+        struct MemoryStruct chunk;
+
+        chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
+        chunk.size = 0; /* no data at this point */
+
+        CURL *curl;
+        struct curl_slist *headers = NULL;
+
+        int str_lenght = strlen(HEADER_AUTHORIZATION) + 1;
+        char *header = malloc(str_lenght * sizeof (char));
+        strcpy(header, HEADER_AUTHORIZATION);
+
+
+        str_lenght += strlen(access_token);
+        header = realloc(header, str_lenght);
+        strcat(header, access_token);
+
+
+        headers = curl_slist_append(headers, header);
+
+        curl = curl_easy_init();
+
+        if (!curl)
+        {
+            printf("ERROR");
+            return NULL;
+        }
+
+        char *response = NULL;
+        str_lenght = strlen(LISTS_HTTP_REQUEST) + 2;
+        char *listsHttpRequest = malloc(str_lenght * sizeof (char));
+        strcpy(listsHttpRequest, LISTS_HTTP_REQUEST);
+        strcat(listsHttpRequest, "/");
+
+        str_lenght += strlen(taskListsId) + 1;
+        listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+        strcat(listsHttpRequest, taskListsId);
+        strcat(listsHttpRequest, "?");
+
+        if (fields != NULL)
+        {
+            str_lenght += strlen(FIELDS_STRING);
+            listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+            strcat(listsHttpRequest, FIELDS_STRING);
+
+            str_lenght += strlen(fields) + 1;
             listsHttpRequest = realloc(listsHttpRequest, str_lenght);
             strcat(listsHttpRequest, fields);
         }
@@ -266,4 +343,124 @@ size_t static httpsCallback(void *ptr, size_t size, size_t nmemb, void *data)
     mem->memory[mem->size] = 0;
 
     return realsize;
+}
+
+
+
+char *buildPostFields(TaskListItem *item)
+{
+    
+    int str_length = strlen("{") + 1;
+    char *ret_value = malloc(str_length * sizeof (char));
+    strcpy(ret_value, "{");
+    int added = 0;
+    if(item != NULL)
+    {
+    
+        if(item->title != NULL)
+        {
+            str_length = addQuotes(ret_value);
+            str_length += strlen(TITLE_STRING);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, TITLE_STRING);
+            addQuotes(ret_value);
+            addColon(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(item->title);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, item->title);
+            str_length = addQuotes(ret_value);
+            added++;
+        }
+
+        if(item->id != NULL)
+        {
+            if(added++ > 0)
+                str_length = addComma(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(ID_STRING);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, ID_STRING);
+            str_length = addQuotes(ret_value);
+            str_length = addColon(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(item->id);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, item->id);
+            str_length = addQuotes(ret_value);
+        }
+
+        if(item->updated != NULL)
+        {
+            if(added++ > 0)
+                str_length = addComma(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(UPDATED_STRING);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, UPDATED_STRING);
+            str_length = addQuotes(ret_value);
+            str_length = addColon(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(item->updated);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, item->updated);
+            str_length = addQuotes(ret_value);
+        }
+        
+        if(item->selfLink != NULL)
+        {
+            if(added++ > 0)
+                str_length = addComma(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(SELFLINK_STRING);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, SELFLINK_STRING);
+            str_length = addQuotes(ret_value);
+            str_length = addColon(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(item->selfLink);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, item->selfLink);
+            str_length = addQuotes(ret_value);
+        }
+        
+        if(item->etag != NULL)
+        {
+            if(added++ > 0)
+                str_length = addComma(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(ETAG_STRING);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, ETAG_STRING);
+            str_length = addQuotes(ret_value);
+            str_length = addColon(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(item->etag);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, item->etag);
+            str_length = addQuotes(ret_value);
+        }
+        
+        if(item->kind != NULL)
+        {
+            if(added++ > 0)
+                str_length = addComma(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(KIND_STRING);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, KIND_STRING);
+            str_length = addQuotes(ret_value);
+            str_length = addColon(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(item->kind);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, item->kind);
+            str_length = addQuotes(ret_value);
+        }
+    }
+
+    str_length += strlen("}");
+    ret_value = realloc(ret_value, str_length);
+    strcat(ret_value, "}");
+    return ret_value;
 }
