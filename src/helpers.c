@@ -47,8 +47,9 @@ int addComma(char *string)
 
 int appendString(char *destination, char *source)
 {
-    printf("%s<->%s\n", destination, source);
-    int length = strlen(destination) + strlen(source) +1;printf("!!%d!!", length);
+    
+    int length = strlen(destination) + strlen(source) + 1;
+    
     destination = realloc(destination, length);
     strcat(destination, source);
     return length;

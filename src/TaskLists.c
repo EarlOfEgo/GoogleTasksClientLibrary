@@ -352,87 +352,107 @@ char *buildPostFields(TaskListItem *item)
     char *ret_value = malloc(str_length * sizeof (char));
     strcpy(ret_value, "{");
     int added = 0;
-    if (item != NULL)
+        if(item != NULL)
     {
-
-        if (item->title != NULL)
+    
+        if(item->title != NULL)
         {
             str_length = addQuotes(ret_value);
-            str_length += appendString(ret_value, TITLE_STRING);
-            
+            str_length += strlen(TITLE_STRING);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, TITLE_STRING);
             addQuotes(ret_value);
             addColon(ret_value);
-            
             str_length = addQuotes(ret_value);
-            
-            str_length += appendString(ret_value, item->title);
-            printf("1\n%s\n%s\n", ret_value, item->title); return NULL;
+            str_length += strlen(item->title);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, item->title);
             str_length = addQuotes(ret_value);
             added++;
         }
+
+        if(item->id != NULL)
+        {
+            if(added++ > 0)
+                str_length = addComma(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(ID_STRING);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, ID_STRING);
+            str_length = addQuotes(ret_value);
+            str_length = addColon(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(item->id);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, item->id);
+            str_length = addQuotes(ret_value);
+        }
+
+        if(item->updated != NULL)
+        {
+            if(added++ > 0)
+                str_length = addComma(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(UPDATED_STRING);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, UPDATED_STRING);
+            str_length = addQuotes(ret_value);
+            str_length = addColon(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(item->updated);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, item->updated);
+            str_length = addQuotes(ret_value);
+        }
         
-        if (item->id != NULL)
+        if(item->selfLink != NULL)
         {
-            if (added++ > 0)
+            if(added++ > 0)
                 str_length = addComma(ret_value);
             str_length = addQuotes(ret_value);
-            str_length += appendString(ret_value, ID_STRING);
+            str_length += strlen(SELFLINK_STRING);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, SELFLINK_STRING);
             str_length = addQuotes(ret_value);
             str_length = addColon(ret_value);
             str_length = addQuotes(ret_value);
-            str_length += appendString(ret_value, item->id);
+            str_length += strlen(item->selfLink);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, item->selfLink);
             str_length = addQuotes(ret_value);
         }
-
-        if (item->updated != NULL)
+        
+        if(item->etag != NULL)
         {
-            if (added++ > 0)
+            if(added++ > 0)
                 str_length = addComma(ret_value);
             str_length = addQuotes(ret_value);
-            str_length += appendString(ret_value, UPDATED_STRING);
+            str_length += strlen(ETAG_STRING);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, ETAG_STRING);
             str_length = addQuotes(ret_value);
             str_length = addColon(ret_value);
             str_length = addQuotes(ret_value);
-            str_length += appendString(ret_value, item->updated);
+            str_length += strlen(item->etag);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, item->etag);
             str_length = addQuotes(ret_value);
         }
-
-        if (item->selfLink != NULL)
+        
+        if(item->kind != NULL)
         {
-            if (added++ > 0)
+            if(added++ > 0)
                 str_length = addComma(ret_value);
             str_length = addQuotes(ret_value);
-            str_length += appendString(ret_value, SELFLINK_STRING);
+            str_length += strlen(KIND_STRING);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, KIND_STRING);
             str_length = addQuotes(ret_value);
             str_length = addColon(ret_value);
             str_length = addQuotes(ret_value);
-            str_length += appendString(ret_value, item->selfLink);
-            str_length = addQuotes(ret_value);
-        }
-
-        if (item->etag != NULL)
-        {
-            if (added++ > 0)
-                str_length = addComma(ret_value);
-            str_length = addQuotes(ret_value);
-            str_length += appendString(ret_value, ETAG_STRING);
-            str_length = addQuotes(ret_value);
-            str_length = addColon(ret_value);
-            str_length = addQuotes(ret_value);
-            str_length += appendString(ret_value, item->etag);
-            str_length = addQuotes(ret_value);
-        }
-
-        if (item->kind != NULL)
-        {
-            if (added++ > 0)
-                str_length = addComma(ret_value);
-            str_length = addQuotes(ret_value);
-            str_length += appendString(ret_value, KIND_STRING);
-            str_length = addQuotes(ret_value);
-            str_length = addColon(ret_value);
-            str_length = addQuotes(ret_value);
-            str_length += appendString(ret_value, item->kind);
+            str_length += strlen(item->kind);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, item->kind);
             str_length = addQuotes(ret_value);
         }
     }
