@@ -64,14 +64,16 @@ typedef struct
 }TaskLists_Lists;
 
 
-struct MemoryStruct {
-  char *memory;
-  size_t size;
+struct MemoryStruct 
+{
+    char *memory;
+    size_t size;
 };
 
-struct WriteThis {
-  const char *readptr;
-  long sizeleft;
+struct WriteThis 
+{
+    const char *readptr;
+    long sizeleft;
 };
 
 

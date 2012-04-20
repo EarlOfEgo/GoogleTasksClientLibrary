@@ -38,8 +38,18 @@ int addColon(char *string)
 
 int addComma(char *string)
 {
-    int length = strlen(string) + strlen(",\n") +1;
+    int length = strlen(string) + strlen(",") +1;
     string = realloc(string, length);
-    strcat(string, ",\n");
+    strcat(string, ",");
+    return length;
+}
+
+
+int appendString(char *destination, char *source)
+{
+    printf("%s<->%s\n", destination, source);
+    int length = strlen(destination) + strlen(source) +1;printf("!!%d!!", length);
+    destination = realloc(destination, length);
+    strcat(destination, source);
     return length;
 }
