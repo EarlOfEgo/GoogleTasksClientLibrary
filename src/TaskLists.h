@@ -69,6 +69,11 @@ struct MemoryStruct {
   size_t size;
 };
 
+struct WriteThis {
+  const char *readptr;
+  long sizeleft;
+};
+
 
 TaskLists_Lists* createNewTaskLists_ListsFromJson(json_value *value);
 TaskListItem* createNewTaskListItem(json_value * value);
@@ -80,7 +85,8 @@ void deleteItemFromTaskLists_list(TaskLists_Lists *taskLists_Lists, char *item);
 #define LISTS_HTTP_REQUEST "https://www.googleapis.com/tasks/v1/users/@me/lists"
 char *taskLists_List(char *access_token, int maxResults, char *pageToken, char *fields);
 char *taskLists_Get(char *access_token, char *taskListsId, char *fields);
-char *taskLists_Insert(TaskListItem *item);
+char *taskLists_Insert(char *access_token, TaskListItem *item);
+char *taskLists_Update(char *access_token, TaskListItem *item);
 
 char *buildPostFields(TaskListItem *item);
 
@@ -91,6 +97,7 @@ char *buildPostFields(TaskListItem *item);
 #define FIELDS_STRING "fields="
 
 size_t static httpsCallback(void *ptr, size_t size, size_t nmemb, void *data);
+static size_t readCallback(void *ptr, size_t size, size_t nmemb, void *userp);
 
 
 
