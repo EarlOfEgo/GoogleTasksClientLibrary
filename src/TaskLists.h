@@ -89,6 +89,7 @@ char *taskLists_List(char *access_token, int maxResults, char *pageToken, char *
 char *taskLists_Get(char *access_token, char *taskListsId, char *fields);
 char *taskLists_Insert(char *access_token, TaskListItem *item);
 char *taskLists_Update(char *access_token, TaskListItem *item);
+char *taskLists_Delete(char *access_token, TaskListItem *item);
 
 char *buildPostFields(TaskListItem *item);
 

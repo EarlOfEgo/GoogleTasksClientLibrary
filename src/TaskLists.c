@@ -352,10 +352,10 @@ char *buildPostFields(TaskListItem *item)
     char *ret_value = malloc(str_length * sizeof (char));
     strcpy(ret_value, "{");
     int added = 0;
-        if(item != NULL)
+    if (item != NULL)
     {
-    
-        if(item->title != NULL)
+
+        if (item->title != NULL)
         {
             str_length = addQuotes(ret_value);
             str_length += strlen(TITLE_STRING);
@@ -371,9 +371,9 @@ char *buildPostFields(TaskListItem *item)
             added++;
         }
 
-        if(item->id != NULL)
+        if (item->id != NULL)
         {
-            if(added++ > 0)
+            if (added++ > 0)
                 str_length = addComma(ret_value);
             str_length = addQuotes(ret_value);
             str_length += strlen(ID_STRING);
@@ -388,9 +388,9 @@ char *buildPostFields(TaskListItem *item)
             str_length = addQuotes(ret_value);
         }
 
-        if(item->updated != NULL)
+        if (item->updated != NULL)
         {
-            if(added++ > 0)
+            if (added++ > 0)
                 str_length = addComma(ret_value);
             str_length = addQuotes(ret_value);
             str_length += strlen(UPDATED_STRING);
@@ -404,10 +404,10 @@ char *buildPostFields(TaskListItem *item)
             strcat(ret_value, item->updated);
             str_length = addQuotes(ret_value);
         }
-        
-        if(item->selfLink != NULL)
+
+        if (item->selfLink != NULL)
         {
-            if(added++ > 0)
+            if (added++ > 0)
                 str_length = addComma(ret_value);
             str_length = addQuotes(ret_value);
             str_length += strlen(SELFLINK_STRING);
@@ -421,10 +421,10 @@ char *buildPostFields(TaskListItem *item)
             strcat(ret_value, item->selfLink);
             str_length = addQuotes(ret_value);
         }
-        
-        if(item->etag != NULL)
+
+        if (item->etag != NULL)
         {
-            if(added++ > 0)
+            if (added++ > 0)
                 str_length = addComma(ret_value);
             str_length = addQuotes(ret_value);
             str_length += strlen(ETAG_STRING);
@@ -438,10 +438,10 @@ char *buildPostFields(TaskListItem *item)
             strcat(ret_value, item->etag);
             str_length = addQuotes(ret_value);
         }
-        
-        if(item->kind != NULL)
+
+        if (item->kind != NULL)
         {
-            if(added++ > 0)
+            if (added++ > 0)
                 str_length = addComma(ret_value);
             str_length = addQuotes(ret_value);
             str_length += strlen(KIND_STRING);
@@ -477,7 +477,7 @@ char *taskLists_Insert(char *access_token, TaskListItem *item)
         int str_lenght = strlen(HEADER_AUTHORIZATION) + 1;
         char *header = malloc(str_lenght * sizeof (char));
         strcpy(header, HEADER_AUTHORIZATION);
-        
+
         str_lenght += appendString(header, access_token);
 
 
@@ -546,9 +546,9 @@ char *taskLists_Update(char *access_token, TaskListItem *item)
 {
     if (access_token != NULL && item != NULL)
     {
-        if(item->id == NULL)
+        if (item->id == NULL)
             return NULL;
-        
+
         CURL *curl;
 
         struct MemoryStruct memoryStruct;
@@ -571,8 +571,6 @@ char *taskLists_Update(char *access_token, TaskListItem *item)
         headers = curl_slist_append(headers, "Content-Type:  application/json");
         char *postfields = buildPostFields(item);
 
-
-        printf("\n%s\n", postfields);
         struct WriteThis writeThis;
         writeThis.readptr = postfields;
         writeThis.sizeleft = strlen(postfields);
@@ -585,14 +583,12 @@ char *taskLists_Update(char *access_token, TaskListItem *item)
             printf("ERROR");
             return NULL;
         }
-        
-        char *listHttpRequest = malloc(sizeof(char*));
+
+        char *listHttpRequest = malloc(sizeof (char*));
         appendString(listHttpRequest, LISTS_HTTP_REQUEST);
         appendString(listHttpRequest, "/");
         appendString(listHttpRequest, item->title);
-        
-        printf("\n%s\n", listHttpRequest);
-                
+
 
         curl_easy_setopt(curl, CURLOPT_URL, listHttpRequest);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
@@ -615,6 +611,62 @@ char *taskLists_Update(char *access_token, TaskListItem *item)
 
 
         return memoryStruct.memory;
+
+    }
+}
+
+//DOESN'T WORK RIGHT NOW--> I HAVE NO IDEA WHY...
+char *taskLists_Delete(char *access_token, TaskListItem *item)
+{
+    
+    if (access_token != NULL && item != NULL)
+    {
+        if (item->id == NULL)
+            return NULL;
+
+        CURL *curl;
+
+        struct MemoryStruct memoryStruct;
+
+        memoryStruct.memory = malloc(1);
+        memoryStruct.size = 0;
+
+        struct curl_slist *headers = NULL;
+
+        int str_lenght = strlen(HEADER_AUTHORIZATION) + 1;
+        char *header = malloc(str_lenght * sizeof (char));
+        strcpy(header, HEADER_AUTHORIZATION);
+
+        str_lenght += appendString(header, access_token);
+
+
+        headers = curl_slist_append(headers, header);
+
+        char *listHttpRequest = malloc(sizeof (char*));
+        appendString(listHttpRequest, LISTS_HTTP_REQUEST);
+        appendString(listHttpRequest, "/");
+        appendString(listHttpRequest, item->id);
+
         
+        curl_easy_setopt(curl, CURLOPT_URL, listHttpRequest);
+
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+ 
+        
+/*
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+*/
+        
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30000 / 1000);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, httpsCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &memoryStruct);
+
+        curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+
+        return memoryStruct.memory;
     }
 }
