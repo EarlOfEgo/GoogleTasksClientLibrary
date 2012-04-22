@@ -336,7 +336,75 @@ char *taskTasks_List(char *access_token, char *taskList)
         listsHttpRequest = realloc(listsHttpRequest, str_lenght);
         strcat(listsHttpRequest, "/tasks");
         
-        printf("%s\n", listsHttpRequest);
+        curl_easy_setopt(curl, CURLOPT_URL, listsHttpRequest);
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, httpsCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) &chunk);
+
+        curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+
+        return chunk.memory;
+    }
+    return NULL;
+}
+
+
+char *taskTasks_Get(char *access_token, char *taskListsId, char *taskTaskId)
+{
+    if(access_token != NULL && taskListsId != NULL && taskTaskId != NULL)
+    {
+        struct MemoryStruct chunk;
+
+        chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
+        chunk.size = 0; /* no data at this point */
+
+        CURL *curl;
+        struct curl_slist *headers = NULL;
+
+        int str_lenght = strlen(HEADER_AUTHORIZATION) + 1;
+        char *header = malloc(str_lenght * sizeof (char));
+        strcpy(header, HEADER_AUTHORIZATION);
+
+
+        str_lenght += strlen(access_token);
+        header = realloc(header, str_lenght);
+        strcat(header, access_token);
+
+
+        headers = curl_slist_append(headers, header);
+        if (headers != NULL) printf("\n%s\n", headers->data);
+
+        curl = curl_easy_init();
+
+        if (!curl)
+        {
+            printf("ERROR");
+            return NULL;
+        }
+
+        char *response = NULL;
+        str_lenght = strlen(TASKS_HTTP_REQUEST) + 2;
+        char *listsHttpRequest = malloc(str_lenght * sizeof (char));
+        strcpy(listsHttpRequest, TASKS_HTTP_REQUEST);
+        strcat(listsHttpRequest, "/");
+        
+        
+
+        str_lenght += strlen(taskListsId);
+        listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+        strcat(listsHttpRequest, taskListsId);
+        
+        str_lenght += strlen("/tasks/");
+        listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+        strcat(listsHttpRequest, "/tasks/");
+        
+        str_lenght += strlen(taskTaskId);
+        listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+        strcat(listsHttpRequest, taskTaskId);
         
         curl_easy_setopt(curl, CURLOPT_URL, listsHttpRequest);
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
