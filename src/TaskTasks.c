@@ -291,10 +291,10 @@ char *taskTasks_List(char *access_token, char *taskList)
 {
     if (access_token != NULL)
     {
-        struct MemoryStruct chunk;
+        struct MemoryStruct memoryStruct;
 
-        chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
-        chunk.size = 0; /* no data at this point */
+        memoryStruct.memory = malloc(1); /* will be grown as needed by the realloc above */
+        memoryStruct.size = 0; /* no data at this point */
 
         CURL *curl;
         struct curl_slist *headers = NULL;
@@ -325,37 +325,36 @@ char *taskTasks_List(char *access_token, char *taskList)
         char *listsHttpRequest = malloc(str_lenght * sizeof (char));
         strcpy(listsHttpRequest, TASKS_HTTP_REQUEST);
         strcat(listsHttpRequest, "/");
-        
-        
+
+
 
         str_lenght += strlen(taskList);
         listsHttpRequest = realloc(listsHttpRequest, str_lenght);
         strcat(listsHttpRequest, taskList);
-        
+
         str_lenght += strlen("/tasks");
         listsHttpRequest = realloc(listsHttpRequest, str_lenght);
         strcat(listsHttpRequest, "/tasks");
-        
+
         curl_easy_setopt(curl, CURLOPT_URL, listsHttpRequest);
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, httpsCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) &chunk);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) &memoryStruct);
 
         curl_easy_perform(curl);
         curl_easy_cleanup(curl);
 
-        return chunk.memory;
+        return memoryStruct.memory;
     }
     return NULL;
 }
 
-
 char *taskTasks_Get(char *access_token, char *taskListsId, char *taskTaskId)
 {
-    if(access_token != NULL && taskListsId != NULL && taskTaskId != NULL)
+    if (access_token != NULL && taskListsId != NULL && taskTaskId != NULL)
     {
         struct MemoryStruct chunk;
 
@@ -391,21 +390,21 @@ char *taskTasks_Get(char *access_token, char *taskListsId, char *taskTaskId)
         char *listsHttpRequest = malloc(str_lenght * sizeof (char));
         strcpy(listsHttpRequest, TASKS_HTTP_REQUEST);
         strcat(listsHttpRequest, "/");
-        
-        
+
+
 
         str_lenght += strlen(taskListsId);
         listsHttpRequest = realloc(listsHttpRequest, str_lenght);
         strcat(listsHttpRequest, taskListsId);
-        
+
         str_lenght += strlen("/tasks/");
         listsHttpRequest = realloc(listsHttpRequest, str_lenght);
         strcat(listsHttpRequest, "/tasks/");
-        
+
         str_lenght += strlen(taskTaskId);
         listsHttpRequest = realloc(listsHttpRequest, str_lenght);
         strcat(listsHttpRequest, taskTaskId);
-        
+
         curl_easy_setopt(curl, CURLOPT_URL, listsHttpRequest);
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
@@ -421,3 +420,149 @@ char *taskTasks_Get(char *access_token, char *taskListsId, char *taskTaskId)
     }
     return NULL;
 }
+
+char *taskTasks_Insert(char *access_token, char *taskListsId, TaskItem *item)
+{
+    if (access_token != NULL && taskListsId != NULL && item != NULL)
+    {
+        struct MemoryStruct memoryStruct;
+
+        memoryStruct.memory = malloc(1);
+        memoryStruct.size = 0;
+
+        CURL *curl;
+        struct curl_slist *headers = NULL;
+
+        int str_lenght = strlen(HEADER_AUTHORIZATION) + 1;
+        char *header = malloc(str_lenght * sizeof (char));
+        strcpy(header, HEADER_AUTHORIZATION);
+
+
+        str_lenght += strlen(access_token);
+        header = realloc(header, str_lenght);
+        strcat(header, access_token);
+
+
+        headers = curl_slist_append(headers, header);
+        headers = curl_slist_append(headers, "Content-Type:  application/json");
+        if (headers != NULL) printf("\n%s\n", headers->data);
+
+        curl = curl_easy_init();
+
+        if (!curl)
+        {
+            printf("ERROR");
+            return NULL;
+        }
+
+        char *response = NULL;
+        str_lenght = strlen(TASKS_HTTP_REQUEST) + 2;
+        char *listsHttpRequest = malloc(str_lenght * sizeof (char));
+        strcpy(listsHttpRequest, TASKS_HTTP_REQUEST);
+        strcat(listsHttpRequest, "/");
+
+
+
+        str_lenght += strlen(taskListsId);
+        listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+        strcat(listsHttpRequest, taskListsId);
+
+        str_lenght += strlen("/tasks");
+        listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+        strcat(listsHttpRequest, "/tasks");
+
+        char * postFields = buildPostFieldsTaskItem(item);
+        struct WriteThis writeThis;
+        writeThis.readptr = postFields;
+        writeThis.sizeleft = strlen(postFields);
+
+
+        curl_easy_setopt(curl, CURLOPT_URL, listsHttpRequest);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl, CURLOPT_POST, 1L);
+        curl_easy_setopt(curl, CURLOPT_READFUNCTION, readCallback);
+        curl_easy_setopt(curl, CURLOPT_READDATA, &writeThis);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (curl_off_t) writeThis.sizeleft);
+
+
+
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30000 / 1000);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, httpsCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &memoryStruct);
+
+        curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+
+
+        return memoryStruct.memory;
+    }
+    return NULL;
+}
+
+static char *buildPostFieldsTaskItem(TaskItem *item)//TODO: add all fields
+{
+    int str_length = strlen("{") + 1;
+    char *ret_value = malloc(str_length * sizeof (char));
+    strcpy(ret_value, "{");
+    int added = 0;
+    if (item != NULL)
+    {
+
+        if (item->title != NULL)
+        {
+            str_length = addQuotes(ret_value);
+            str_length += strlen(TITLE_STRING);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, TITLE_STRING);
+            addQuotes(ret_value);
+            addColon(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(item->title);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, item->title);
+            str_length = addQuotes(ret_value);
+            added++;
+        }
+
+        if (item->id != NULL)
+        {
+            if (added++ > 0)
+                str_length = addComma(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(ID_STRING);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, ID_STRING);
+            str_length = addQuotes(ret_value);
+            str_length = addColon(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(item->id);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, item->id);
+            str_length = addQuotes(ret_value);
+        }
+
+        if (item->kind != NULL)
+        {
+            if (added++ > 0)
+                str_length = addComma(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(KIND_STRING);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, KIND_STRING);
+            str_length = addQuotes(ret_value);
+            str_length = addColon(ret_value);
+            str_length = addQuotes(ret_value);
+            str_length += strlen(item->kind);
+            ret_value = realloc(ret_value, str_length);
+            strcat(ret_value, item->kind);
+            str_length = addQuotes(ret_value);
+        }
+    }
+
+    appendString(ret_value, "}");
+    return ret_value;
+}
+
