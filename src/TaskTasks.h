@@ -94,6 +94,7 @@ static char *buildPostFieldsTaskItem(TaskItem *item);
 char *taskTasks_List(char *access_token, char *taskList);//Others are optional, will be added later..
 char *taskTasks_Get(char *access_token, char *taskListsId, char *taskTaskId);
 char *taskTasks_Insert(char *access_token, char *taskListsId, TaskItem *item);
+char *taskTasks_Update(char *access_token, char *taskListsId, TaskItem *item);
 
 #define TASKS_HTTP_REQUEST "https://www.googleapis.com/tasks/v1/lists"
 

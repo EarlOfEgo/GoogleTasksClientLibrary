@@ -543,7 +543,7 @@ char *taskLists_Update(char *access_token, TaskListItem *item)
         char *listHttpRequest = malloc(sizeof (char*));
         appendString(listHttpRequest, LISTS_HTTP_REQUEST);
         appendString(listHttpRequest, "/");
-        appendString(listHttpRequest, item->title);
+        appendString(listHttpRequest, item->id);
 
 
         curl_easy_setopt(curl, CURLOPT_URL, listHttpRequest);

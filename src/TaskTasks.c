@@ -566,3 +566,91 @@ static char *buildPostFieldsTaskItem(TaskItem *item)//TODO: add all fields
     return ret_value;
 }
 
+
+char *taskTasks_Update(char *access_token, char *taskListsId, TaskItem *item)
+{
+    if (access_token != NULL && taskListsId != NULL && item != NULL)
+    {
+        struct MemoryStruct memoryStruct;
+
+        memoryStruct.memory = malloc(1);
+        memoryStruct.size = 0;
+
+        CURL *curl;
+        struct curl_slist *headers = NULL;
+
+        int str_lenght = strlen(HEADER_AUTHORIZATION) + 1;
+        char *header = malloc(str_lenght * sizeof (char));
+        strcpy(header, HEADER_AUTHORIZATION);
+
+
+        str_lenght += strlen(access_token);
+        header = realloc(header, str_lenght);
+        strcat(header, access_token);
+
+
+        headers = curl_slist_append(headers, header);
+        headers = curl_slist_append(headers, "Content-Type:  application/json");
+
+        curl = curl_easy_init();
+
+        if (!curl)
+        {
+            printf("ERROR");
+            return NULL;
+        }
+
+        char *response = NULL;
+        str_lenght = strlen(TASKS_HTTP_REQUEST) + 2;
+        char *listsHttpRequest = malloc(str_lenght * sizeof (char));
+        strcpy(listsHttpRequest, TASKS_HTTP_REQUEST);
+        strcat(listsHttpRequest, "/");
+
+
+
+        str_lenght += strlen(taskListsId);
+        listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+        strcat(listsHttpRequest, taskListsId);
+
+        str_lenght += strlen("/tasks/");
+        listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+        strcat(listsHttpRequest, "/tasks/");
+        
+        str_lenght += strlen(item->id);
+        listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+        strcat(listsHttpRequest, item->id);
+        printf("%s\n", listsHttpRequest);
+        
+
+        char * postFields = buildPostFieldsTaskItem(item);
+        printf("%s\n", postFields);
+        
+        struct WriteThis writeThis;
+        writeThis.readptr = postFields;
+        writeThis.sizeleft = strlen(postFields);
+
+
+        curl_easy_setopt(curl, CURLOPT_URL, listsHttpRequest);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl, CURLOPT_PUT, 1L);
+        curl_easy_setopt(curl, CURLOPT_READFUNCTION, readCallback);
+        curl_easy_setopt(curl, CURLOPT_READDATA, &writeThis);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (curl_off_t) writeThis.sizeleft);
+
+
+
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30000 / 1000);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, httpsCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &memoryStruct);
+
+        curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+
+
+        return memoryStruct.memory;
+    }
+    return NULL;
+}
