@@ -79,7 +79,7 @@ char *buildPostFieldsForRequestingAnAccessToken(char *accessTokenCode);
 char *buildPostFieldsForRefreshingTheAccessToken(char *refreshToken);
 
 char *makeHttpsRequestWithResponse(char *postfields, char *https_server);
-size_t static httpsCallback(void *ptr, size_t size, size_t nmemb, void *data);
+size_t static httpsCallbackOauth(void *ptr, size_t size, size_t nmemb, void *data);
 
 
 char *getFileContent(char *path, int *errorCode);

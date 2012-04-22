@@ -251,7 +251,7 @@ char *makeHttpsRequestWithResponse(char *postfields, char *https_server)
     curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, strlen(postfields));
     curl_easy_setopt(curl, CURLOPT_POST, 1L);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30000 / 1000);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, httpsCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, httpsCallbackOauth);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
     curl_easy_perform(curl);
@@ -269,7 +269,7 @@ char *makeHttpsRequestWithResponse(char *postfields, char *https_server)
  * @param data
  * @return 
  */
-size_t static httpsCallback(void *ptr, size_t size, size_t nmemb, void *data)
+size_t static httpsCallbackOauth(void *ptr, size_t size, size_t nmemb, void *data)
 {
 
     char **res_ptr = (char**) data;

@@ -19,6 +19,8 @@
 #include "TaskTasks.h"
 #include "TaskLists.h"
 
+#include "helpers.h"
+
 TaskLink* createNewTaskLinks(json_value *value)
 {
     TaskLink *link = malloc(sizeof (TaskLink));
@@ -253,34 +255,101 @@ TaskItem *createNewTaskItem(json_value *value)
                     if (value->u.object.values[i].value->type == json_boolean)
                     {
                         newItem->deleted = value->u.object.values[i].value->u.boolean;
-                    } 
-/*
-                    else
-                    {
-                        newItem->deleted = malloc(value->u.object.values[i].value->u.string.length + 1);
-                        strcpy(newItem->deleted, value->u.object.values[i].value->u.string.ptr);
                     }
-*/
+                    /*
+                                        else
+                                        {
+                                            newItem->deleted = malloc(value->u.object.values[i].value->u.string.length + 1);
+                                            strcpy(newItem->deleted, value->u.object.values[i].value->u.string.ptr);
+                                        }
+                     */
 
                 } else if (strcmp(value->u.object.values[i].name, HIDDEN_STRING) == 0)
                 {
                     if (value->u.object.values[i].value->type == json_boolean)
                     {
                         newItem->hidden = value->u.object.values[i].value->u.boolean;
-                    } 
-/*
-                    else
-                    {
-                        newItem->hidden = malloc(value->u.object.values[i].value->u.string.length + 1);
-                        strcpy(newItem->hidden, value->u.object.values[i].value->u.string.ptr);
                     }
-*/
+                    /*
+                                        else
+                                        {
+                                            newItem->hidden = malloc(value->u.object.values[i].value->u.string.length + 1);
+                                            strcpy(newItem->hidden, value->u.object.values[i].value->u.string.ptr);
+                                        }
+                     */
                 }
             } else
                 for (j = 0; j < value->u.object.values[i].value->u.array.length; j++)
                     addLinkToTaskItem(newItem, createNewTaskLinks(value->u.object.values[i].value->u.array.values[j]));
         }
         return newItem;
+    }
+    return NULL;
+}
+
+char *taskTasks_List(char *access_token, char *taskList)
+{
+    if (access_token != NULL)
+    {
+        struct MemoryStruct chunk;
+
+        chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
+        chunk.size = 0; /* no data at this point */
+
+        CURL *curl;
+        struct curl_slist *headers = NULL;
+
+        int str_lenght = strlen(HEADER_AUTHORIZATION) + 1;
+        char *header = malloc(str_lenght * sizeof (char));
+        strcpy(header, HEADER_AUTHORIZATION);
+
+
+        str_lenght += strlen(access_token);
+        header = realloc(header, str_lenght);
+        strcat(header, access_token);
+
+
+        headers = curl_slist_append(headers, header);
+        if (headers != NULL) printf("\n%s\n", headers->data);
+
+        curl = curl_easy_init();
+
+        if (!curl)
+        {
+            printf("ERROR");
+            return NULL;
+        }
+
+        char *response = NULL;
+        str_lenght = strlen(TASKS_HTTP_REQUEST) + 2;
+        char *listsHttpRequest = malloc(str_lenght * sizeof (char));
+        strcpy(listsHttpRequest, TASKS_HTTP_REQUEST);
+        strcat(listsHttpRequest, "/");
+        
+        
+
+        str_lenght += strlen(taskList);
+        listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+        strcat(listsHttpRequest, taskList);
+        
+        str_lenght += strlen("/tasks");
+        listsHttpRequest = realloc(listsHttpRequest, str_lenght);
+        strcat(listsHttpRequest, "/tasks");
+        
+        printf("%s\n", listsHttpRequest);
+        
+        curl_easy_setopt(curl, CURLOPT_URL, listsHttpRequest);
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, httpsCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *) &chunk);
+
+        curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+
+        return chunk.memory;
     }
     return NULL;
 }

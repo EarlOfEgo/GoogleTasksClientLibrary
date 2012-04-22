@@ -316,34 +316,7 @@ char *taskLists_Get(char *access_token, char *taskListsId, char *fields)
     return NULL;
 }
 
-/**
- * If server sends a response.
- * @param ptr
- * @param size
- * @param nmemb
- * @param data
- * @return 
- */
-size_t static httpsCallback(void *ptr, size_t size, size_t nmemb, void *data)
-{
 
-    size_t realsize = size * nmemb;
-    struct MemoryStruct *mem = (struct MemoryStruct *) data;
-
-    mem->memory = realloc(mem->memory, mem->size + realsize + 1);
-    if (mem->memory == NULL)
-    {
-        /* out of memory! */
-        printf("not enough memory (realloc returned NULL)\n");
-        exit(EXIT_FAILURE);
-    }
-
-    memcpy(&(mem->memory[mem->size]), ptr, realsize);
-    mem->size += realsize;
-    mem->memory[mem->size] = 0;
-
-    return realsize;
-}
 
 char *buildPostFields(TaskListItem *item)
 {
@@ -524,23 +497,6 @@ char *taskLists_Insert(char *access_token, TaskListItem *item)
     return NULL;
 };
 
-static size_t readCallback(void *ptr, size_t size, size_t nmemb, void *userp)
-{
-    struct WriteThis *writeThis = (struct WriteThis *) userp;
-
-    if (size * nmemb < 1)
-        return 0;
-
-    if (writeThis->sizeleft)
-    {
-        *(char *) ptr = writeThis->readptr[0]; /* copy one single byte */
-        writeThis->readptr++; /* advance pointer */
-        writeThis->sizeleft--; /* less data left */
-        return 1; /* we return 1 byte at a time! */
-    }
-
-    return 0; /* no more data left to deliver */
-}
 
 char *taskLists_Update(char *access_token, TaskListItem *item)
 {

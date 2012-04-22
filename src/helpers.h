@@ -33,6 +33,25 @@ int addColon(char *string);
 int addQuotes(char *string);
 int appendString(char *destination, char *source);
 
+struct MemoryStruct 
+{
+    char *memory;
+    size_t size;
+};
+
+struct WriteThis 
+{
+    const char *readptr;
+    long sizeleft;
+};
+
+
+size_t httpsCallback(void *ptr, size_t size, size_t nmemb, void *data);
+size_t readCallback(void *ptr, size_t size, size_t nmemb, void *userp);
+
+
+
+
 
 
 #ifdef	__cplusplus

@@ -64,17 +64,6 @@ typedef struct
 }TaskLists_Lists;
 
 
-struct MemoryStruct 
-{
-    char *memory;
-    size_t size;
-};
-
-struct WriteThis 
-{
-    const char *readptr;
-    long sizeleft;
-};
 
 
 TaskLists_Lists* createNewTaskLists_ListsFromJson(json_value *value);
@@ -98,11 +87,6 @@ char *buildPostFields(TaskListItem *item);
 #define MAX_RESULTS_STRING "maxResults="
 #define PAGE_TOKEN_STRING "pageToken="
 #define FIELDS_STRING "fields="
-
-size_t static httpsCallback(void *ptr, size_t size, size_t nmemb, void *data);
-static size_t readCallback(void *ptr, size_t size, size_t nmemb, void *userp);
-
-
 
 
 

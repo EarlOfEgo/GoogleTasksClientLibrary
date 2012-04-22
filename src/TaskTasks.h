@@ -24,6 +24,7 @@
 #include <string.h>
 
 #include "json.h"
+#include "helpers.h"
 
 #define TYPE_STRING "type"
 #define DESCRIPTION_STRING "description"
@@ -86,6 +87,11 @@ void addTaskItemToTaskList(TaskList *list, TaskItem *item);
 void deleteTaskItemFromTaskList(TaskList *list, char *id);
 
 TaskItem *createNewTaskItem(json_value *value);
+
+
+char *taskTasks_List(char *access_token, char *taskList);//Others are optional, will be added later..
+
+#define TASKS_HTTP_REQUEST "https://www.googleapis.com/tasks/v1/lists"
 
 
 #ifdef	__cplusplus

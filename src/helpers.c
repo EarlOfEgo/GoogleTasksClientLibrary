@@ -54,3 +54,54 @@ int appendString(char *destination, char *source)
     strcat(destination, source);
     return length;
 }
+
+
+/**
+ * If server sends a response.
+ * @param ptr
+ * @param size
+ * @param nmemb
+ * @param data
+ * @return 
+ */
+size_t httpsCallback(void *ptr, size_t size, size_t nmemb, void *data)
+{
+
+    size_t realsize = size * nmemb;
+    struct MemoryStruct *mem = (struct MemoryStruct *) data;
+
+    mem->memory = realloc(mem->memory, mem->size + realsize + 1);
+    if (mem->memory == NULL)
+    {
+        /* out of memory! */
+        printf("not enough memory (realloc returned NULL)\n");
+        exit(EXIT_FAILURE);
+    }
+
+    memcpy(&(mem->memory[mem->size]), ptr, realsize);
+    mem->size += realsize;
+    mem->memory[mem->size] = 0;
+
+    return realsize;
+}
+
+
+
+
+size_t readCallback(void *ptr, size_t size, size_t nmemb, void *userp)
+{
+    struct WriteThis *writeThis = (struct WriteThis *) userp;
+
+    if (size * nmemb < 1)
+        return 0;
+
+    if (writeThis->sizeleft)
+    {
+        *(char *) ptr = writeThis->readptr[0];
+        writeThis->readptr++;
+        writeThis->sizeleft--;
+        return 1;
+    }
+
+    return 0;
+}
