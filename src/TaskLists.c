@@ -316,8 +316,6 @@ char *taskLists_Get(char *access_token, char *taskListsId, char *fields)
     return NULL;
 }
 
-
-
 char *buildPostFields(TaskListItem *item)
 {
 
@@ -497,7 +495,6 @@ char *taskLists_Insert(char *access_token, TaskListItem *item)
     return NULL;
 };
 
-
 char *taskLists_Update(char *access_token, TaskListItem *item)
 {
     if (access_token != NULL && item != NULL)
@@ -572,15 +569,18 @@ char *taskLists_Update(char *access_token, TaskListItem *item)
 }
 
 //DOESN'T WORK RIGHT NOW--> I HAVE NO IDEA WHY...
+
 char *taskLists_Delete(char *access_token, TaskListItem *item)
 {
-    
+
     if (access_token != NULL && item != NULL)
     {
         if (item->id == NULL)
             return NULL;
 
         CURL *curl;
+        
+        curl = curl_easy_init();
 
         struct MemoryStruct memoryStruct;
 
@@ -603,19 +603,25 @@ char *taskLists_Delete(char *access_token, TaskListItem *item)
         appendString(listHttpRequest, "/");
         appendString(listHttpRequest, item->id);
 
-        
+        char * postFields = "";
+        struct WriteThis writeThis;
+        writeThis.readptr = postFields;
+        writeThis.sizeleft = strlen(postFields);
+
+
         curl_easy_setopt(curl, CURLOPT_URL, listHttpRequest);
 
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
- 
-        
-/*
-        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-*/
-        
+
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-        
+
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+        curl_easy_setopt(curl, CURLOPT_READFUNCTION, readCallback);
+        curl_easy_setopt(curl, CURLOPT_READDATA, &writeThis);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (curl_off_t) writeThis.sizeleft);
+
         curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30000 / 1000);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, httpsCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &memoryStruct);
@@ -623,6 +629,6 @@ char *taskLists_Delete(char *access_token, TaskListItem *item)
         curl_easy_perform(curl);
         curl_easy_cleanup(curl);
 
-        return memoryStruct.memory;
+        return NULL; //memoryStruct.memory;
     }
 }
