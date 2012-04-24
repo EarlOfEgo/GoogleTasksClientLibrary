@@ -37,8 +37,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/src/main.o \
 	${OBJECTDIR}/src/TaskTasks.o \
 	${OBJECTDIR}/src/TaskLists.o \
-	${OBJECTDIR}/src/json.o \
 	${OBJECTDIR}/src/helpers.o \
+	${OBJECTDIR}/src/json.o \
 	${OBJECTDIR}/src/googleOauth2Access.o
 
 # Test Directory
@@ -89,15 +89,15 @@ ${OBJECTDIR}/src/TaskLists.o: src/TaskLists.c
 	${RM} $@.d
 	$(COMPILE.c) -g -I. -I. -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/TaskLists.o src/TaskLists.c
 
-${OBJECTDIR}/src/json.o: src/json.c 
-	${MKDIR} -p ${OBJECTDIR}/src
-	${RM} $@.d
-	$(COMPILE.c) -g -I. -I. -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/json.o src/json.c
-
 ${OBJECTDIR}/src/helpers.o: src/helpers.c 
 	${MKDIR} -p ${OBJECTDIR}/src
 	${RM} $@.d
 	$(COMPILE.c) -g -I. -I. -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/helpers.o src/helpers.c
+
+${OBJECTDIR}/src/json.o: src/json.c 
+	${MKDIR} -p ${OBJECTDIR}/src
+	${RM} $@.d
+	$(COMPILE.c) -g -I. -I. -I. -I. -I. -I. -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/json.o src/json.c
 
 ${OBJECTDIR}/src/googleOauth2Access.o: src/googleOauth2Access.c 
 	${MKDIR} -p ${OBJECTDIR}/src
@@ -179,19 +179,6 @@ ${OBJECTDIR}/src/TaskLists_nomain.o: ${OBJECTDIR}/src/TaskLists.o src/TaskLists.
 	    ${CP} ${OBJECTDIR}/src/TaskLists.o ${OBJECTDIR}/src/TaskLists_nomain.o;\
 	fi
 
-${OBJECTDIR}/src/json_nomain.o: ${OBJECTDIR}/src/json.o src/json.c 
-	${MKDIR} -p ${OBJECTDIR}/src
-	@NMOUTPUT=`${NM} ${OBJECTDIR}/src/json.o`; \
-	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
-	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
-	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
-	then  \
-	    ${RM} $@.d;\
-	    $(COMPILE.c) -g -I. -I. -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/json_nomain.o src/json.c;\
-	else  \
-	    ${CP} ${OBJECTDIR}/src/json.o ${OBJECTDIR}/src/json_nomain.o;\
-	fi
-
 ${OBJECTDIR}/src/helpers_nomain.o: ${OBJECTDIR}/src/helpers.o src/helpers.c 
 	${MKDIR} -p ${OBJECTDIR}/src
 	@NMOUTPUT=`${NM} ${OBJECTDIR}/src/helpers.o`; \
@@ -203,6 +190,19 @@ ${OBJECTDIR}/src/helpers_nomain.o: ${OBJECTDIR}/src/helpers.o src/helpers.c
 	    $(COMPILE.c) -g -I. -I. -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/helpers_nomain.o src/helpers.c;\
 	else  \
 	    ${CP} ${OBJECTDIR}/src/helpers.o ${OBJECTDIR}/src/helpers_nomain.o;\
+	fi
+
+${OBJECTDIR}/src/json_nomain.o: ${OBJECTDIR}/src/json.o src/json.c 
+	${MKDIR} -p ${OBJECTDIR}/src
+	@NMOUTPUT=`${NM} ${OBJECTDIR}/src/json.o`; \
+	if (echo "$$NMOUTPUT" | ${GREP} '|main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T main$$') || \
+	   (echo "$$NMOUTPUT" | ${GREP} 'T _main$$'); \
+	then  \
+	    ${RM} $@.d;\
+	    $(COMPILE.c) -g -I. -I. -I. -I. -I. -I. -Dmain=__nomain -MMD -MP -MF $@.d -o ${OBJECTDIR}/src/json_nomain.o src/json.c;\
+	else  \
+	    ${CP} ${OBJECTDIR}/src/json.o ${OBJECTDIR}/src/json_nomain.o;\
 	fi
 
 ${OBJECTDIR}/src/googleOauth2Access_nomain.o: ${OBJECTDIR}/src/googleOauth2Access.o src/googleOauth2Access.c 

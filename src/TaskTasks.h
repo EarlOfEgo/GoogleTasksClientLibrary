@@ -95,6 +95,8 @@ char *taskTasks_List(char *access_token, char *taskList);//Others are optional, 
 char *taskTasks_Get(char *access_token, char *taskListsId, char *taskTaskId);
 char *taskTasks_Insert(char *access_token, char *taskListsId, TaskItem *item);
 char *taskTasks_Update(char *access_token, char *taskListsId, TaskItem *item);
+char *taskTasks_Clear(char* access_token, char * taskListId);
+char *taskTasks_Move(char* access_token, char * taskListId);
 
 #define TASKS_HTTP_REQUEST "https://www.googleapis.com/tasks/v1/lists"
 
