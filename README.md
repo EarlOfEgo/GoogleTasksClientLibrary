@@ -8,33 +8,18 @@ At the moment it is possible to access google via Oauth2, request an access toke
 To execute the tests type:
     $make test
 At the moment there are two dummy files: "client.id.for.git" and "client.secret.for.git".
-They being used for testing the google oauth2 methods(with Cunit), for testing with real client id/secret write a small main:
-src/main.c
+They being used for testing the google oauth2 methods(with Cunit)
+##Oauth2
+`int initClientInformation(char *clientIdFile, char *clientSecretFile)` must be called first, with the name of the file which includes the client id and a file with the client secret.
 
-```c
-#include <stdio.h>
-#include <stdlib.h>
-#include "googleOauth2Access.h"
+`buildAccessTokenRequestAsHtmlRequest()` returns a string which needs to be copied in the browser. After this the user have to confirm the access.
 
-int main(int argc, char** argv) 
-{
-   
-   initClientInformation("client_file_name", "client_secret_name");
-   printf("Insert this in your browser:\n%s\n\nCopy the id and paste it:\n", buildAccessTokenRequestAsHtmlRequest());
-   
-   char str[255] = {'\0'};
-   gets(str);
-    
-   printf("Google response:\n%s\n", makeHttpsRequestWithResponse(buildPostFieldsForRequestingAnAccessToken(&str), TOKEN_SERVER));
-    
-   return (EXIT_SUCCESS);
-}
-```
+`buildPostFieldsForRequestingAnAccessToken(char *accessTokenCode)` returns the postfilds, this can be used when making a https request.(accessTokenCode is the code that needs to be copied from the browser).
 
-And run: 
-    $make
-The executables can be found at:    
-    build/Debug/YOUR_SYSTEM/tests/TestFiles/
+`buildPostFieldsForRefreshingTheAccessToken(char *refreshToken)` if the 
+token was expired. Here the refresh token is needed, not the access token!.
+
+
 ###Requirements
 Until now, just libcurl and cunit for the unit tests
 

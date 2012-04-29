@@ -736,3 +736,9 @@ char *taskTasks_Clear(char* access_token, char * taskListId)
     }
     return NULL;
 }
+
+
+char *taskTasks_Delete(char *access_token, char *taskListsId, TaskItem *item)
+{
+
+}

@@ -568,7 +568,6 @@ char *taskLists_Update(char *access_token, TaskListItem *item)
     }
 }
 
-//DOESN'T WORK RIGHT NOW--> I HAVE NO IDEA WHY...
 
 char *taskLists_Delete(char *access_token, TaskListItem *item)
 {
@@ -629,6 +628,7 @@ char *taskLists_Delete(char *access_token, TaskListItem *item)
         curl_easy_perform(curl);
         curl_easy_cleanup(curl);
 
-        return NULL; //memoryStruct.memory;
+        return memoryStruct.memory;
     }
+    return NULL;
 }
