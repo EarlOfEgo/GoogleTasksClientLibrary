@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <curl/curl.h>
-#include <curl/types.h>
+//#include <curl/types.h>
 #include <curl/easy.h>
 
 

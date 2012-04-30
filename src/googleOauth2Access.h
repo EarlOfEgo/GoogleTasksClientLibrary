@@ -20,7 +20,7 @@
 #define	GOOGLEOAUTH2ACCESS_H
 
 #include <curl/curl.h>
-#include <curl/types.h>
+//#include <curl/types.h>
 #include <curl/easy.h>
 #include <stdio.h>
 #include <stdlib.h>

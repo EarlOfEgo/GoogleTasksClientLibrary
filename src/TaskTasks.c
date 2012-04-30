@@ -566,7 +566,6 @@ static char *buildPostFieldsTaskItem(TaskItem *item)//TODO: add all fields
     return ret_value;
 }
 
-
 char *taskTasks_Update(char *access_token, char *taskListsId, TaskItem *item)
 {
     if (access_token != NULL && taskListsId != NULL && item != NULL)
@@ -615,16 +614,16 @@ char *taskTasks_Update(char *access_token, char *taskListsId, TaskItem *item)
         str_lenght += strlen("/tasks/");
         listsHttpRequest = realloc(listsHttpRequest, str_lenght);
         strcat(listsHttpRequest, "/tasks/");
-        
+
         str_lenght += strlen(item->id);
         listsHttpRequest = realloc(listsHttpRequest, str_lenght);
         strcat(listsHttpRequest, item->id);
         printf("%s\n", listsHttpRequest);
-        
+
 
         char * postFields = buildPostFieldsTaskItem(item);
         printf("%s\n", postFields);
-        
+
         struct WriteThis writeThis;
         writeThis.readptr = postFields;
         writeThis.sizeleft = strlen(postFields);
@@ -654,7 +653,6 @@ char *taskTasks_Update(char *access_token, char *taskListsId, TaskItem *item)
     }
     return NULL;
 }
-
 
 char *taskTasks_Clear(char* access_token, char * taskListId)
 {
@@ -704,7 +702,7 @@ char *taskTasks_Clear(char* access_token, char * taskListId)
         str_lenght += strlen("/clear");
         listsHttpRequest = realloc(listsHttpRequest, str_lenght);
         strcat(listsHttpRequest, "/clear");
- 
+
 
         char * postFields = "";
         struct WriteThis writeThis;
@@ -737,8 +735,69 @@ char *taskTasks_Clear(char* access_token, char * taskListId)
     return NULL;
 }
 
-
 char *taskTasks_Delete(char *access_token, char *taskListsId, TaskItem *item)
 {
+    if (access_token != NULL && taskListsId != NULL && item != NULL)
+    {
+        if (item->id == NULL)
+            return NULL;
 
+        CURL *curl;
+
+        curl = curl_easy_init();
+
+        struct MemoryStruct memoryStruct;
+
+        memoryStruct.memory = malloc(1);
+        memoryStruct.size = 0;
+
+        struct curl_slist *headers = NULL;
+
+        int str_lenght = strlen(HEADER_AUTHORIZATION) + 1;
+        char *header = malloc(str_lenght * sizeof (char));
+        strcpy(header, HEADER_AUTHORIZATION);
+
+        str_lenght += appendString(header, access_token);
+
+
+        headers = curl_slist_append(headers, header);
+
+        char *listHttpRequest = malloc(sizeof (char*));
+        appendString(listHttpRequest, TASKS_HTTP_REQUEST);
+        appendString(listHttpRequest, "/");
+        appendString(listHttpRequest, taskListsId);
+        appendString(listHttpRequest, "/tasks/");
+        appendString(listHttpRequest, item->id);
+        
+        printf("%s\n", listHttpRequest);
+
+        char * postFields = "";
+        struct WriteThis writeThis;
+        writeThis.readptr = postFields;
+        writeThis.sizeleft = strlen(postFields);
+
+
+        curl_easy_setopt(curl, CURLOPT_URL, listHttpRequest);
+
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+        curl_easy_setopt(curl, CURLOPT_READFUNCTION, readCallback);
+        curl_easy_setopt(curl, CURLOPT_READDATA, &writeThis);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, (curl_off_t) writeThis.sizeleft);
+
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 30000 / 1000);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, httpsCallback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &memoryStruct);
+
+        curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+
+        return memoryStruct.memory;
+    }
+    return NULL;
 }
