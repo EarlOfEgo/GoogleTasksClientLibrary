@@ -69,10 +69,10 @@ char *buildPostFieldsForRequestingAnAccessToken(char *accessTokenCode)//TODO: RE
     int str_lenght = strlen(CODE_STRING) + 1;
     char *ret_value = malloc(str_lenght * sizeof (char));
     strcpy(ret_value, CODE_STRING);
-
-    str_lenght += strlen(accessTokenCode);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, accessTokenCode);
+	ret_value = appendString(ret_value, accessTokenCode);
+    /*str_lenght += strlen(accessTokenCode);*/
+    /*ret_value = realloc(ret_value, str_lenght);*/
+    /*strcat(ret_value, accessTokenCode);*/
 
     str_lenght += strlen(AND);
     ret_value = realloc(ret_value, str_lenght);
