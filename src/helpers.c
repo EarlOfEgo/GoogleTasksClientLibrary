@@ -45,14 +45,14 @@ int addComma(char *string)
 }
 
 
-int appendString(char *destination, char *source)
+char* appendString(char *destination, const char *source)
 {
     
     int length = strlen(destination) + strlen(source) + 1;
     
     destination = realloc(destination, length);
     strcat(destination, source);
-    return length;
+    return destination;
 }
 
 

@@ -31,7 +31,7 @@ extern "C" {
 int addComma(char *string);
 int addColon(char *string);
 int addQuotes(char *string);
-int appendString(char *destination, char *source);
+char* appendString(char *destination, const char *source);
 
 struct MemoryStruct 
 {

@@ -32,72 +32,28 @@ char *buildAccessTokenRequestAsHtmlRequest() //TODO: REFACTOR AFTER ALL TESTS SU
     char *ret_value = malloc(str_lenght * sizeof (char));
     strcpy(ret_value, AUTH_SERVER);
 
-    str_lenght += strlen(QUESTIONMARK);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, QUESTIONMARK);
-
-    str_lenght += strlen(CLIENT_ID_STRING);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, CLIENT_ID_STRING);
-
     if (clientInformation->client_id == NULL || clientInformation->client_secret == NULL)
     {
         printf("ERROR");
         return NULL;
     }
 
+	ret_value = appendString(ret_value, QUESTIONMARK);
+    	ret_value = appendString(ret_value, CLIENT_ID_STRING);
     char *client_id = clientInformation->client_id;
-    str_lenght += strlen(client_id);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, client_id);
-
-    str_lenght += strlen(AND);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, AND);
-
-    str_lenght += strlen(REDIRECT_URI_STRING);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, REDIRECT_URI_STRING);
-
-    str_lenght += strlen(REDIRECT_URI);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, REDIRECT_URI);
-
-    str_lenght += strlen(AND);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, AND);
-
-    str_lenght += strlen(SCOPE_STRING);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, SCOPE_STRING);
-
-    str_lenght += strlen(SCOPE);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, SCOPE);
-
-    str_lenght += strlen(AND);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, AND);
-
-    str_lenght += strlen(RESPONSE_TYPE_STRING);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, RESPONSE_TYPE_STRING);
-
-    str_lenght += strlen(CODE);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, CODE);
-
-    str_lenght += strlen(AND);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, AND);
-
-    str_lenght += strlen(ACCESS_TYPE_STRING);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, ACCESS_TYPE_STRING);
-
-    str_lenght += strlen(ACCESS_TYPE_OFFLINE);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, ACCESS_TYPE_OFFLINE);
+   	ret_value = appendString(ret_value, client_id);
+	ret_value = appendString(ret_value, AND);
+	ret_value = appendString(ret_value, REDIRECT_URI_STRING);
+	ret_value = appendString(ret_value, REDIRECT_URI);
+	ret_value = appendString(ret_value, AND);
+	ret_value = appendString(ret_value, SCOPE_STRING);
+	ret_value = appendString(ret_value, SCOPE);
+	ret_value = appendString(ret_value, AND);
+	ret_value = appendString(ret_value, RESPONSE_TYPE_STRING);
+	ret_value = appendString(ret_value, CODE);
+	ret_value = appendString(ret_value, AND);
+	ret_value = appendString(ret_value, ACCESS_TYPE_STRING);
+	ret_value = appendString(ret_value, ACCESS_TYPE_OFFLINE);
 
     return ret_value;
 }

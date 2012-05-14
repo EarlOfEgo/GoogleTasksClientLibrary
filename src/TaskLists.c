@@ -449,7 +449,7 @@ char *taskLists_Insert(char *access_token, TaskListItem *item)
         char *header = malloc(str_lenght * sizeof (char));
         strcpy(header, HEADER_AUTHORIZATION);
 
-        str_lenght += appendString(header, access_token);
+        header = appendString(header, access_token);
 
 
         headers = curl_slist_append(headers, header);
@@ -517,7 +517,7 @@ char *taskLists_Update(char *access_token, TaskListItem *item)
 
 
 
-        str_lenght += appendString(header, access_token);
+        header = appendString(header, access_token);
 
 
         headers = curl_slist_append(headers, header);
@@ -592,7 +592,7 @@ char *taskLists_Delete(char *access_token, TaskListItem *item)
         char *header = malloc(str_lenght * sizeof (char));
         strcpy(header, HEADER_AUTHORIZATION);
 
-        str_lenght += appendString(header, access_token);
+        header = appendString(header, access_token);
 
 
         headers = curl_slist_append(headers, header);

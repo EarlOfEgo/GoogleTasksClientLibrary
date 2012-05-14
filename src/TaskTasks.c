@@ -768,8 +768,6 @@ char *taskTasks_Delete(char *access_token, char *taskListsId, TaskItem *item)
         appendString(listHttpRequest, taskListsId);
         appendString(listHttpRequest, "/tasks/");
         appendString(listHttpRequest, item->id);
-        
-        printf("%s\n", listHttpRequest);
 
         char * postFields = "";
         struct WriteThis writeThis;

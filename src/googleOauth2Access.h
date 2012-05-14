@@ -38,37 +38,37 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
-  
-#define REDIRECT_URI "urn:ietf:wg:oauth:2.0:oob"
-#define AUTH_SERVER "https://accounts.google.com/o/oauth2/auth"
-#define SCOPE "https://www.googleapis.com/auth/tasks"
-#define TOKEN_SERVER "https://accounts.google.com/o/oauth2/token"
-#define QUESTIONMARK "?"
-#define AND "&"
-
-#define CLIENT_ID_STRING "client_id="
-#define CLIENT_SECRET_STRING "client_secret="
-#define REDIRECT_URI_STRING "redirect_uri="
-#define SCOPE_STRING "scope="
-#define RESPONSE_TYPE_STRING "response_type="
-#define CODE "code"
-#define CODE_STRING "code="
-#define ACCESS_TYPE_STRING "access_type="
-#define ACCESS_TYPE_OFFLINE "offline"
-#define GRANT_TYPE_STRING "grant_type="
-#define AUTHORIZATION_CODE "authorization_code"
+ 
+static const char* REDIRECT_URI =  "urn:ietf:wg:oauth:2.0:oob";
+static const char* AUTH_SERVER =  "https://accounts.google.com/o/oauth2/auth";
+static const char* SCOPE = "https://www.googleapis.com/auth/tasks";
+static const char* TOKEN_SERVER = "https://accounts.google.com/o/oauth2/token";
+static const char* QUESTIONMARK = "?";
+//#define AND "&"
+static const char *AND = "&";
+static const char* CLIENT_ID_STRING = "client_id=";
+static const char* CLIENT_SECRET_STRING = "client_secret=";
+static const char* REDIRECT_URI_STRING = "redirect_uri=";
+static const char* SCOPE_STRING = "scope=";
+static const char* RESPONSE_TYPE_STRING = "response_type=";
+static const char* CODE = "code";
+static const char* CODE_STRING = "code=";
+static const char* ACCESS_TYPE_STRING = "access_type=";
+static const char* ACCESS_TYPE_OFFLINE = "offline";
+static const char* GRANT_TYPE_STRING = "grant_type=";
+static const char* AUTHORIZATION_CODE = "authorization_code";
     
-#define ACCESS_TOKEN "access_token"
-#define EXPIRES_IN "expires_in"
-#define TOKEN_TYPE "token_type"
-#define REFRESH_TOKEN "refresh_token"
+static const char* ACCESS_TOKEN = "access_token";
+static const char* EXPIRES_IN = "expires_in";
+static const char* TOKEN_TYPE = "token_type";
+static const char* REFRESH_TOKEN = "refresh_token";
 
-#define REFRESH_TOKEN_STRING "refresh_token="
-#define ACCESS_TOKEN_STRING "access_token="
+static const char* REFRESH_TOKEN_STRING = "refresh_token=";
+static const char* ACCESS_TOKEN_STRING = "access_token=";
     
-#define NO_ERROR "NO_ERROR"
-#define ERROR "error"
-#define INVALID_GRAND_STRING "invalid_grant"
+static const char* NO_ERROR = "NO_ERROR";
+static const char* ERROR = "error";
+static const char* INVALID_GRAND_STRING = "invalid_grant";
     
 /* GOOGLE RESPONSE ERROR CODES */
 #define INVALID_GRAND 20

@@ -19,6 +19,7 @@ They being used for testing the google oauth2 methods(with Cunit)
 `buildPostFieldsForRefreshingTheAccessToken(char *refreshToken)` if the 
 token was expired. Here the refresh token is needed, not the access token!.
 
+`makeHttpsRequestWithResponse(char *postfields, char *https_server)` after building the postfields, this method can be executed. If everything works fine, google will answer with a json, which includes an access token.
 
 ###Requirements
 Until now, just libcurl and cunit for the unit tests
