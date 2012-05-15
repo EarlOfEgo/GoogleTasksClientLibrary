@@ -29,7 +29,7 @@ char *buildAccessTokenRequestAsHtmlRequest() //TODO: REFACTOR AFTER ALL TESTS SU
 {
 
     int str_lenght = strlen(AUTH_SERVER) + 1;
-    char *ret_value = malloc(str_lenght * sizeof (char));
+    char *ret_value =  malloc(str_lenght * sizeof (char));
     strcpy(ret_value, AUTH_SERVER);
 
     if (clientInformation->client_id == NULL || clientInformation->client_secret == NULL)
@@ -41,7 +41,7 @@ char *buildAccessTokenRequestAsHtmlRequest() //TODO: REFACTOR AFTER ALL TESTS SU
 	ret_value = appendString(ret_value, QUESTIONMARK);
     	ret_value = appendString(ret_value, CLIENT_ID_STRING);
     char *client_id = clientInformation->client_id;
-   	ret_value = appendString(ret_value, client_id);
+  	ret_value = appendString(ret_value, client_id);
 	ret_value = appendString(ret_value, AND);
 	ret_value = appendString(ret_value, REDIRECT_URI_STRING);
 	ret_value = appendString(ret_value, REDIRECT_URI);
@@ -63,22 +63,20 @@ char *buildAccessTokenRequestAsHtmlRequest() //TODO: REFACTOR AFTER ALL TESTS SU
  * @param accessTokenCode
  * @return the post fields as a string
  */
-char *buildPostFieldsForRequestingAnAccessToken(char *accessTokenCode)//TODO: REFACTOR AFTER ALL TESTS SUCCEED.... //TODO: WRITE TESTS!!
+char *buildPostFieldsForRequestingAnAccessToken(const char *accessTokenCode)//TODO: REFACTOR AFTER ALL TESTS SUCCEED.... //TODO: WRITE TESTS!!
 {
 
     int str_lenght = strlen(CODE_STRING) + 1;
     char *ret_value = malloc(str_lenght * sizeof (char));
     strcpy(ret_value, CODE_STRING);
-	ret_value = appendString(ret_value, accessTokenCode);
-    /*str_lenght += strlen(accessTokenCode);*/
-    /*ret_value = realloc(ret_value, str_lenght);*/
-    /*strcat(ret_value, accessTokenCode);*/
 
-    str_lenght += strlen(AND);
+    str_lenght += strlen(accessTokenCode);
     ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, AND);
-
-    str_lenght += strlen(CLIENT_ID_STRING);
+    strcat(ret_value, accessTokenCode);
+	
+    ret_value = appendString(ret_value, AND);
+    
+        str_lenght += strlen(CLIENT_ID_STRING);
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, CLIENT_ID_STRING);
 
@@ -87,9 +85,7 @@ char *buildPostFieldsForRequestingAnAccessToken(char *accessTokenCode)//TODO: RE
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, client_id);
 
-    str_lenght += strlen(AND);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, AND);
+    ret_value = appendString(ret_value, AND);
 
     str_lenght += strlen(CLIENT_SECRET_STRING);
     ret_value = realloc(ret_value, str_lenght);
@@ -142,9 +138,7 @@ char *buildPostFieldsForRefreshingTheAccessToken(char *refreshToken)//TODO: REFA
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, refreshToken);
 
-    str_lenght += strlen(AND);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, AND);
+    ret_value = appendString(ret_value, AND);
 
     str_lenght += strlen(CLIENT_ID_STRING);
     ret_value = realloc(ret_value, str_lenght);
@@ -155,9 +149,7 @@ char *buildPostFieldsForRefreshingTheAccessToken(char *refreshToken)//TODO: REFA
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, client_id);
 
-    str_lenght += strlen(AND);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, AND);
+    ret_value = appendString(ret_value, AND);
 
     str_lenght += strlen(CLIENT_SECRET_STRING);
     ret_value = realloc(ret_value, str_lenght);
@@ -168,9 +160,7 @@ char *buildPostFieldsForRefreshingTheAccessToken(char *refreshToken)//TODO: REFA
     ret_value = realloc(ret_value, str_lenght);
     strcat(ret_value, client_secret);
 
-    str_lenght += strlen(AND);
-    ret_value = realloc(ret_value, str_lenght);
-    strcat(ret_value, AND);
+    ret_value = appendString(ret_value, AND);
 
     str_lenght += strlen(GRANT_TYPE_STRING);
     ret_value = realloc(ret_value, str_lenght);
@@ -388,10 +378,10 @@ int initClientInformation(char *clientIdFile, char *clientSecretFile)
 {
     int errorCode = 0;
     clientInformation = malloc(sizeof (ClientInformation));
-    char *client_id = getFileContent(getFullFileName(clientIdFile), &errorCode);
+    const char* client_id = getFileContent(getFullFileName(clientIdFile), &errorCode);
     if (errorCode != 0)
         return errorCode;
-    char *client_secret = getFileContent(getFullFileName(clientSecretFile), &errorCode);
+    const char* client_secret = getFileContent(getFullFileName(clientSecretFile), &errorCode);
     if (errorCode != 0)
         return errorCode;
     clientInformation->client_id = malloc(strlen(client_id) + 1);

@@ -33,15 +33,7 @@
 extern "C" {
 #endif
     
-#define TASKLISTS_STRING "tasks#taskLists"
-#define KIND_STRING "kind"
-#define ETAG_STRING "etag"
-#define NEXTPAGETOKEN_STRING "nextPageToken"
-#define TASKLISTITEM_STRING "tasks#taskList"
-#define ID_STRING "id"
-#define TITLE_STRING "title"
-#define UPDATED_STRING "updated"
-#define SELFLINK_STRING "selfLink"
+
 
 typedef struct
 {
@@ -82,11 +74,7 @@ char *taskLists_Delete(char *access_token, TaskListItem *item);
 
 char *buildPostFields(TaskListItem *item);
 
-#define HEADER_AUTHORIZATION "Authorization:  Bearer "
 
-#define MAX_RESULTS_STRING "maxResults="
-#define PAGE_TOKEN_STRING "pageToken="
-#define FIELDS_STRING "fields="
 
 
 

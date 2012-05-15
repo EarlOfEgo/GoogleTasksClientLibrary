@@ -26,17 +26,7 @@
 #include "json.h"
 #include "helpers.h"
 
-#define TYPE_STRING "type"
-#define DESCRIPTION_STRING "description"
-#define LINK_STRING "link"
-#define PARENT_STRING "parent"
-#define POSITION_STRING "position"
-#define NOTES_STRING "notes"
-#define STATUS_STRING "status"
-#define DUE_STRING "due"
-#define COMPLETED_STRING "completed"
-#define DELETED_STRING "deleted"
-#define HIDDEN_STRING "hidden"
+
 
 
 typedef struct
@@ -98,7 +88,6 @@ char *taskTasks_Update(char *access_token, char *taskListsId, TaskItem *item);
 char *taskTasks_Clear(char* access_token, char * taskListId);
 char *taskTasks_Delete(char *access_token, char *taskListsId, TaskItem *item);
 
-#define TASKS_HTTP_REQUEST "https://www.googleapis.com/tasks/v1/lists"
 
 
 #ifdef	__cplusplus
